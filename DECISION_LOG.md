@@ -273,4 +273,31 @@ This log records major architectural and product decisions for the AwareMate pro
 - **Rationale:** Strict adherence to AGENTS.md Section 4 (Compassionate UX, zero dark patterns, no shame-driven metrics).
 - **Consequences:** Fosters psychological safety and sustainable self-reflection habits.
 
+## Phase 7 Architectural Decisions
+
+### D-032: Multiplatform Network Connectivity Observer & Offline-First Resilience
+- **Date:** 2026-09-03
+- **Status:** Accepted
+- **Context:** Ensuring AwareMate functions 100% offline without crashing, stalling, or throwing unhandled network exceptions when airplane mode or spotty connectivity occurs.
+- **Decision:** Implemented `ConnectivityObserver` (Android `ConnectivityManager.NetworkCallback` + StateFlow, iOS stub) registered in Koin DI. Enhanced `SyncRepositoryImpl` and `MoodRepositoryImpl` to silently catch network drops, maintain unsynced items in Room with `isSynced = false`, and sync queues seamlessly upon reconnection. Added `AppContextProvider` static fallback for application context safety across all Android platform helpers.
+- **Rationale:** Youth must never experience fear of data loss or confusing error dialogs while offline.
+- **Consequences:** The app operates identically offline and online; local SQLite Room DB is the unwavering Single Source of Truth.
+
+### D-033: Non-Intrusive In-App Privacy Architecture & Voluntary Sponsorship Model
+- **Date:** 2026-09-03
+- **Status:** Accepted
+- **Context:** Fulfilling Google Play Store and Firebase Auth privacy compliance while honoring strict open-source sustainability rules (no ads, no paywalls).
+- **Decision:** Authored comprehensive `PRIVACY_POLICY.md` and integrated an in-app viewer dialog in `SettingsScreen`. Added voluntary sponsorship card with direct outbound browser intents (`openBrowserUrl`) to GitHub Sponsors and Buy Me a Coffee.
+- **Rationale:** Full legal compliance and financial sustainability without exploiting youth attention or locking features behind paywalls.
+- **Consequences:** AwareMate remains 100% free and open source forever.
+
+### D-034: Google Play App Bundle (AAB) & Baseline Profiles Optimization Architecture
+- **Date:** 2026-09-03
+- **Status:** Accepted
+- **Context:** Preparing production release readiness for Google Play Internal Test Track with fast cold startup and minimal download sizes.
+- **Decision:** Configured `signingConfigs` in `androidApp/build.gradle.kts` supporting CI/CD environment variables with fallback to debug signing for internal builds. Implemented `baseline-prof.txt` with ART rules for pre-compilation of Compose, Voyager, Koin, and Room classes. Added `AppStartupMetrics` utility for monitoring time-to-first-render. Updated CI/CD workflow to generate and archive `androidApp-release.aab` on every push to `main`.
+- **Rationale:** Maximizes runtime performance and cold launch responsiveness (<1000ms) on modern Android devices while automating store bundle generation.
+- **Consequences:** Produces signed `.aab` bundles ready for instant upload to Google Play Console.
+
+
 

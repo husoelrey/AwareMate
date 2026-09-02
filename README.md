@@ -1,4 +1,16 @@
-# AwareMate Reference Manual
+# AwareMate
+
+[![AwareMate CI](https://github.com/husoelrey/AwareMate/actions/workflows/ci.yml/badge.svg)](https://github.com/husoelrey/AwareMate/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-purple.svg)](https://kotlinlang.org)
+[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.7.3-teal.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
+[![Platform](https://img.shields.io/badge/Platform-Android_API_26+-green.svg)](https://developer.android.com)
+
+> **Compassionate Awareness Companion App for Youth Growth & Healthy Digital Habits**
+
+[Contributing Guide](CONTRIBUTING.md) • [Privacy Policy](docs/PRIVACY_POLICY.md) • [Store Asset Specifications](docs/STORE_ASSET_SPEC.md)
+
+---
 
 ## 1. Executive Summary & Vision
 **AwareMate** is a compassionate awareness companion app built with Kotlin Multiplatform and Compose Multiplatform. 

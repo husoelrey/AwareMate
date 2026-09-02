@@ -41,4 +41,9 @@ val androidPlatformModule = module {
     single<NotificationService> {
         AndroidNotificationService(context = get())
     }
+
+    // Network Connectivity Observer
+    single<org.awaremate.shared.data.remote.ConnectivityObserver> {
+        org.awaremate.shared.data.remote.AndroidConnectivityObserver(context = get())
+    }
 }

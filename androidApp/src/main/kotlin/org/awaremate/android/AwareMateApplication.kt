@@ -10,6 +10,8 @@ import org.koin.core.context.startKoin
 class AwareMateApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        org.awaremate.shared.util.AppStartupMetrics.recordAppStart()
+        org.awaremate.shared.AppContextProvider.appContext = this
         startKoin {
             androidLogger()
             androidContext(this@AwareMateApplication)

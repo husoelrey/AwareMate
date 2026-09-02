@@ -57,6 +57,10 @@ val commonModule = module {
         org.awaremate.shared.data.repository.SelfDiscoveryRepositoryImpl(promptDao = get())
     }
 
+    // Diagnostics & Analytics Services
+    single<org.awaremate.shared.util.CrashReportingService> { org.awaremate.shared.util.createCrashReportingService() }
+    single<org.awaremate.shared.util.AnalyticsService> { org.awaremate.shared.util.createAnalyticsService() }
+
     // Auth & Sync Repositories
     single<AuthRepository> { AuthRepositoryImpl(authService = get(), userDao = get()) }
     single<SyncRepository> {

@@ -23,3 +23,9 @@ expect fun hasUsageStatsPermission(context: Any? = null): Boolean
  * On Android, launches Settings.ACTION_USAGE_ACCESS_SETTINGS.
  */
 expect fun openUsageAccessSettings(context: Any? = null)
+
+/**
+ * Opens a web URL in the system's default browser application.
+ */
+expect fun openBrowserUrl(url: String, context: Any? = null)
+

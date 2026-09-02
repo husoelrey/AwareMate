@@ -49,6 +49,11 @@ class KoinDependencyGraphTest : KoinTest {
         }
         single<AuthService> { FakeAuthService() }
         single<CloudSyncService> { FakeCloudSyncService() }
+        single<org.awaremate.shared.data.remote.ConnectivityObserver> {
+            object : org.awaremate.shared.data.remote.ConnectivityObserver {
+                override val isOnline = kotlinx.coroutines.flow.MutableStateFlow(true)
+            }
+        }
     }
 
     @BeforeTest
@@ -115,6 +120,11 @@ class KoinDependencyGraphTest : KoinTest {
         assertNotNull(get<org.awaremate.shared.domain.usecase.growth.LogMoodUseCase>())
         assertNotNull(get<org.awaremate.shared.domain.usecase.growth.GetPersonalizedHobbiesUseCase>())
         assertNotNull(get<org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodInsightsUseCase>())
+
+        // Verify P7 Services resolve
+        assertNotNull(get<org.awaremate.shared.util.CrashReportingService>())
+        assertNotNull(get<org.awaremate.shared.util.AnalyticsService>())
+        assertNotNull(get<org.awaremate.shared.data.remote.ConnectivityObserver>())
 
         // Verify ScreenModels resolve
         assertNotNull(get<org.awaremate.shared.presentation.onboarding.OnboardingScreenModel>())

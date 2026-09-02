@@ -64,6 +64,8 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.firebase.auth)
             implementation(libs.firebase.firestore)
+            implementation(libs.firebase.analytics)
+            implementation(libs.firebase.crashlytics)
             implementation(libs.vico.compose)
             implementation(libs.vico.compose.m3)
         }

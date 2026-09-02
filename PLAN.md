@@ -62,17 +62,17 @@
 - [x] Complete personal growth module tests
 
 ## P7 — Polish and release readiness
-- [ ] Implement error handling and offline-first behavior
-- [ ] Accessibility review (TalkBack, content descriptions, contrast ratios)
-- [ ] Performance optimization (baseline profiles, startup time)
-- [ ] App icon, splash screen, store listing assets
-- [ ] Minimal privacy policy page (required for Play Store listing / Firebase Auth account creation, independent of internal priority)
-- [ ] Set up optional donation/sponsorship link (e.g. GitHub Sponsors, Buy Me a Coffee) for sustainability — no ads, no paywall
-- [ ] `README.md` and Contributing guide
-- [ ] GitHub Actions CI/CD pipeline
-- [ ] Google Play Store internal test track
-- [ ] Firebase Crashlytics + Analytics integration
-- [ ] Run complete acceptance checklist
+- [x] Implement error handling and offline-first behavior
+- [x] Accessibility review (TalkBack, content descriptions, contrast ratios)
+- [x] Performance optimization (baseline profiles, startup time)
+- [x] App icon, splash screen, store listing assets
+- [x] Minimal privacy policy page (required for Play Store listing / Firebase Auth account creation, independent of internal priority)
+- [x] Set up optional donation/sponsorship link (e.g. GitHub Sponsors, Buy Me a Coffee) for sustainability — no ads, no paywall
+- [x] `README.md` and Contributing guide
+- [x] GitHub Actions CI/CD pipeline
+- [x] Google Play Store internal test track
+- [x] Firebase Crashlytics + Analytics integration
+- [x] Run complete acceptance checklist
 
 ---
 

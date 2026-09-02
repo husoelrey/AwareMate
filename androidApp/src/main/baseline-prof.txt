@@ -1,0 +1,44 @@
+# AwareMate Baseline Profile Rules
+# Pre-compiled startup and critical user interaction classes
+
+# Application & Platform Initialization
+Lorg/awaremate/android/AwareMateApplication;
+HSPLorg/awaremate/android/AwareMateApplication;->onCreate()V
+Lorg/awaremate/android/MainActivity;
+HSPLorg/awaremate/android/MainActivity;->onCreate(Landroid/os/Bundle;)V
+
+# Dependency Injection (Koin)
+Lorg/awaremate/shared/di/KoinAndroidModuleKt;
+Lorg/awaremate/shared/di/KoinModulesKt;
+
+# Room KMP Database & DAOs
+Lorg/awaremate/shared/data/local/database/AwareMateDatabase;
+Lorg/awaremate/shared/data/local/dao/UserDao;
+Lorg/awaremate/shared/data/local/dao/CompanionDao;
+Lorg/awaremate/shared/data/local/dao/MoodEntryDao;
+Lorg/awaremate/shared/data/local/dao/FocusSessionDao;
+Lorg/awaremate/shared/data/local/dao/DailyChallengeDao;
+Lorg/awaremate/shared/data/local/dao/HobbyDao;
+Lorg/awaremate/shared/data/local/dao/SelfDiscoveryPromptDao;
+Lorg/awaremate/shared/data/local/dao/ScreenTimeDao;
+
+# Navigation & Screen Models (Voyager)
+Lcafe/adriel/voyager/navigator/Navigator;
+Lcafe/adriel/voyager/core/screen/Screen;
+Lcafe/adriel/voyager/core/model/ScreenModel;
+Lorg/awaremate/shared/presentation/home/HomeScreen;
+Lorg/awaremate/shared/presentation/home/HomeScreenModel;
+Lorg/awaremate/shared/presentation/companion/CompanionScreen;
+Lorg/awaremate/shared/presentation/companion/CompanionCanvasKt;
+Lorg/awaremate/shared/presentation/focus/FocusScreen;
+Lorg/awaremate/shared/presentation/growth/GrowthScreen;
+
+# Theme & Compose Material 3 Foundation
+Lorg/awaremate/shared/presentation/theme/ThemeKt;
+Lorg/awaremate/shared/presentation/theme/ColorKt;
+Landroidx/compose/material3/MaterialTheme;
+Landroidx/compose/runtime/Composable;
+
+# Metrics & Utilities
+Lorg/awaremate/shared/util/AppStartupMetrics;
+HSPLorg/awaremate/shared/util/AppStartupMetrics;->recordAppStart()V

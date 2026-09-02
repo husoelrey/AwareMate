@@ -33,28 +33,37 @@ class SyncRepositoryImpl(
         // Unsynced mood entries
         val unsyncedMoods = moodEntryDao.getUnsyncedEntries()
         for (mood in unsyncedMoods) {
-            val result = cloudSyncService.backupMoodEntry(mood.toDomain())
-            if (result.isSuccess) {
-                moodEntryDao.markAsSynced(mood.id, true)
-            }
+            runCatching { cloudSyncService.backupMoodEntry(mood.toDomain()) }
+                .getOrNull()
+                ?.let { result ->
+                    if (result.isSuccess) {
+                        moodEntryDao.markAsSynced(mood.id, true)
+                    }
+                }
         }
 
         // Unsynced focus sessions
         val unsyncedSessions = focusSessionDao.getUnsyncedSessions()
         for (session in unsyncedSessions) {
-            val result = cloudSyncService.backupFocusSession(session.toDomain())
-            if (result.isSuccess) {
-                focusSessionDao.markAsSynced(session.id, true)
-            }
+            runCatching { cloudSyncService.backupFocusSession(session.toDomain()) }
+                .getOrNull()
+                ?.let { result ->
+                    if (result.isSuccess) {
+                        focusSessionDao.markAsSynced(session.id, true)
+                    }
+                }
         }
 
         // Unsynced daily challenges
         val unsyncedChallenges = dailyChallengeDao.getUnsyncedChallenges()
         for (challenge in unsyncedChallenges) {
-            val result = cloudSyncService.backupDailyChallenge(challenge.toDomain())
-            if (result.isSuccess) {
-                dailyChallengeDao.markAsSynced(challenge.id, true)
-            }
+            runCatching { cloudSyncService.backupDailyChallenge(challenge.toDomain()) }
+                .getOrNull()
+                ?.let { result ->
+                    if (result.isSuccess) {
+                        dailyChallengeDao.markAsSynced(challenge.id, true)
+                    }
+                }
         }
     }
 }

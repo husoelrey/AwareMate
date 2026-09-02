@@ -20,6 +20,15 @@ import org.awaremate.shared.presentation.home.components.CompanionWidget
 import org.awaremate.shared.presentation.home.components.DailySparksCard
 import org.awaremate.shared.presentation.home.components.QuickActions
 import org.awaremate.shared.presentation.home.components.ScoreCard
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 import org.awaremate.shared.presentation.theme.AwareMateTheme
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -332,5 +341,60 @@ class ComposeUiAccessibilityTest {
             .assertIsDisplayed()
             .performClick()
         assertTrue(sessionLogged)
+    }
+
+    @Test
+    fun testSettingsSupportAndPrivacyAccessibility() = runComposeUiTest {
+        setContent {
+            AwareMateTheme(dynamicColor = false) {
+                // Test the support and privacy buttons
+                Column {
+                    OutlinedButton(
+                        onClick = {},
+                        modifier = Modifier
+                            .sizeIn(minHeight = 48.dp)
+                            .semantics {
+                                contentDescription = "Read full AwareMate Privacy Policy"
+                            }
+                    ) {
+                        Text("View Privacy Policy 📜")
+                    }
+
+                    Button(
+                        onClick = {},
+                        modifier = Modifier
+                            .sizeIn(minHeight = 48.dp)
+                            .semantics {
+                                contentDescription = "Support AwareMate on Buy Me a Coffee"
+                            }
+                    ) {
+                        Text("Buy Coffee ☕")
+                    }
+
+                    OutlinedButton(
+                        onClick = {},
+                        modifier = Modifier
+                            .sizeIn(minHeight = 48.dp)
+                            .semantics {
+                                contentDescription = "Support AwareMate via GitHub Sponsors"
+                            }
+                    ) {
+                        Text("Sponsor 💖")
+                    }
+                }
+            }
+        }
+
+        onNodeWithContentDescription("Read full AwareMate Privacy Policy")
+            .assertIsDisplayed()
+            .performClick()
+
+        onNodeWithContentDescription("Support AwareMate on Buy Me a Coffee")
+            .assertIsDisplayed()
+            .performClick()
+
+        onNodeWithContentDescription("Support AwareMate via GitHub Sponsors")
+            .assertIsDisplayed()
+            .performClick()
     }
 }

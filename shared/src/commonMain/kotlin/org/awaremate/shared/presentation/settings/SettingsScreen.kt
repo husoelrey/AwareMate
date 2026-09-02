@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,11 +25,15 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
@@ -36,10 +41,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.sizeIn
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import org.awaremate.shared.openBrowserUrl
 import org.awaremate.shared.openUsageAccessSettings
 import org.awaremate.shared.presentation.profile.ProfileScreen
 
@@ -51,6 +58,7 @@ class SettingsScreen : Screen {
         val screenModel = koinScreenModel<SettingsScreenModel>()
         val state by screenModel.state.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
+        var showPrivacyDialog by remember { mutableStateOf(false) }
 
         Scaffold(
             topBar = {
@@ -362,12 +370,78 @@ class SettingsScreen : Screen {
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            OutlinedButton(
+                                onClick = { showPrivacyDialog = true },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .sizeIn(minHeight = 48.dp)
+                                    .semantics {
+                                        contentDescription = "Read full AwareMate Privacy Policy"
+                                    }
+                            ) {
+                                Text("View Privacy Policy 📜")
+                            }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // 5. About AwareMate
+                    // 5. Support AwareMate (Sustainability & Voluntary Sponsorship)
+                    SettingsSectionTitle("Support AwareMate 🌿")
+
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.35f)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "100% Free & Open Source",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "AwareMate has no ads, no paywalls, and no data tracking. We are sustained by community love and optional donations to cover hosting and Firebase infrastructure costs.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.85f)
+                            )
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Button(
+                                    onClick = { openBrowserUrl("https://buymeacoffee.com/awaremate") },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .sizeIn(minHeight = 48.dp)
+                                        .semantics {
+                                            contentDescription = "Support AwareMate on Buy Me a Coffee"
+                                        }
+                                ) {
+                                    Text("Buy Coffee ☕", fontSize = 12.sp)
+                                }
+                                OutlinedButton(
+                                    onClick = { openBrowserUrl("https://github.com/sponsors/awaremate") },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .sizeIn(minHeight = 48.dp)
+                                        .semantics {
+                                            contentDescription = "Support AwareMate via GitHub Sponsors"
+                                        }
+                                ) {
+                                    Text("Sponsor 💖", fontSize = 12.sp)
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // 6. About AwareMate
                     SettingsSectionTitle("About")
 
                     Card(
@@ -400,6 +474,65 @@ class SettingsScreen : Screen {
                     Spacer(modifier = Modifier.height(24.dp))
                 }
             }
+        }
+
+        if (showPrivacyDialog) {
+            AlertDialog(
+                onDismissRequest = { showPrivacyDialog = false },
+                title = {
+                    Text(
+                        text = "AwareMate Privacy Policy",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                text = {
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "🔒 Local-First Storage:\nAll screen time data, companion progress, and reflections stay on your device.",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "🚫 Zero Ads & Tracking:\nNo ads, no data broker SDKs, no selling of youth information.",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "☁️ Encrypted Cloud Sync:\nFirebase Auth & Firestore are used solely for your personal cloud backup.",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "🗑️ Complete Data Control:\nYou can purge local and cloud records at any time.",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = { showPrivacyDialog = false },
+                        modifier = Modifier.sizeIn(minHeight = 48.dp, minWidth = 48.dp)
+                    ) {
+                        Text("Close")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            showPrivacyDialog = false
+                            openBrowserUrl("https://github.com/husoelrey/AwareMate/blob/main/docs/PRIVACY_POLICY.md")
+                        },
+                        modifier = Modifier.sizeIn(minHeight = 48.dp, minWidth = 48.dp)
+                    ) {
+                        Text("Read Online")
+                    }
+                }
+            )
         }
     }
 }

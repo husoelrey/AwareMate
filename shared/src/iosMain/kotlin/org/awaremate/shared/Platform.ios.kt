@@ -11,3 +11,7 @@ actual fun hasUsageStatsPermission(context: Any?): Boolean = true
 actual fun openUsageAccessSettings(context: Any?) {
     // No-op for iOS target in v1.0
 }
+
+actual fun openBrowserUrl(url: String, context: Any?) {
+    // No-op for iOS target in v1.0
+}
