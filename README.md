@@ -119,11 +119,38 @@ sealed class HomeIntent { object LoadData : HomeIntent() }
 - Dynamic text sizing and rigorous color contrast ratio enforcement.
 
 ## 10. Prerequisites & Setup
-1. Install Android Studio / IntelliJ IDEA.
-2. Ensure JDK 17+ is configured.
-3. Clone the repository.
-4. Add your `google-services.json` to the `androidApp` module.
-5. Sync Gradle and run the `androidApp` configuration.
+
+### Environment Requirements
+- **JDK 17+** (Java 17 target compatibility, JDK 21 toolchain compatible)
+- **Android SDK** API 35 (Android 15) with Build Tools 35.0.0+
+- **Gradle 8.11.1+** (managed via the included `./gradlew` wrapper)
+- **Android Studio** Ladybug / Meerkat or **IntelliJ IDEA** with Kotlin & Compose Multiplatform plugins
+
+### Getting Started
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/husoelrey/AwareMate.git
+   cd AwareMate
+   ```
+
+2. **Configure Firebase (`google-services.json`):**
+   - *For Local Development / Offline Build:* A template is provided at `androidApp/google-services.json.example`. Copy it to `androidApp/google-services.json`:
+     ```bash
+     # Windows PowerShell
+     Copy-Item androidApp/google-services.json.example androidApp/google-services.json
+     # Unix / macOS
+     cp androidApp/google-services.json.example androidApp/google-services.json
+     ```
+   - *For Real Firebase Integration:*
+     1. Create a project in the [Firebase Console](https://console.firebase.google.com/).
+     2. Register an Android app with package name `org.awaremate.android` (and `org.awaremate.android.debug`).
+     3. Download the generated `google-services.json` and place it in the `androidApp/` directory (`google-services.json` is gitignored).
+     4. Enable **Authentication** (Anonymous + Google Sign-In) and **Cloud Firestore**.
+
+3. **Build and Test Commands:**
+   - **Assemble Debug APK:** `./gradlew assembleDebug`
+   - **Run Unit Tests:** `./gradlew test`
+   - **Run Lint Checks:** `./gradlew lintDebug`
 
 ## 11. Project Structure
 - `androidApp/`: Android specific configurations and entry point.

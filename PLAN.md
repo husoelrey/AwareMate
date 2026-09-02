@@ -9,29 +9,29 @@
 - [x] Verify all context documents are consistent
 
 ## P1 — Development environment and tooling
-- [ ] Verify Android SDK, JDK 17+, Kotlin 2.2+, Gradle 8.x versions
-- [ ] Configure Firebase project and `google-services.json`
-- [ ] Set up CI/CD with GitHub Actions (build, test, lint)
-- [ ] Verify emulator/device build and run
-- [ ] Document environment setup in `RUNTIME_READINESS.md`
+- [x] Verify Android SDK, JDK 17+, Kotlin 2.2+, Gradle 8.x versions
+- [x] Configure Firebase project and `google-services.json` (placeholder template + plugin setup)
+- [x] Set up CI/CD with GitHub Actions (build, test, lint)
+- [x] Verify emulator/device build and run
+- [x] Document environment setup in `RUNTIME_READINESS.md`
 
 ## P2 — Core domain and data layer
-- [ ] Define domain entities (`User`, `Companion`, `MoodEntry`, `FocusSession`, `DailyChallenge`, etc.)
-- [ ] Define repository interfaces in domain layer
-- [ ] Implement Room KMP database with entities and DAOs
-- [ ] Implement DataStore preferences for user settings
-- [ ] Implement Firebase Auth service (Google Sign-in + Anonymous)
-- [ ] Implement Firestore sync service
-- [ ] Set up Koin DI modules (shared + android)
-- [ ] Complete domain and data layer unit tests
+- [x] Define domain entities (`User`, `Companion`, `MoodEntry`, `FocusSession`, `DailyChallenge`, etc.)
+- [x] Define repository interfaces in domain layer
+- [x] Implement Room KMP database with entities and DAOs
+- [x] Implement DataStore preferences for user settings
+- [x] Implement Firebase Auth service (Google Sign-in + Anonymous)
+- [x] Implement Firestore sync service (Local-first Room SSOT + background sync)
+- [x] Set up Koin DI modules (shared + android)
+- [x] Complete domain and data layer unit tests
 
 ## P3 — Companion system and gamification engine
-- [ ] Implement companion growth logic (XP calculation, stage transitions)
-- [ ] Implement momentum score system (gradual decay, not binary streak)
-- [ ] Implement daily challenge generation and tracking
-- [ ] Implement awareness score calculation
-- [ ] Implement companion mood/emotion state machine
-- [ ] Complete companion system unit tests
+- [x] Implement companion growth logic (XP calculation, stage transitions)
+- [x] Implement momentum score system (gradual decay, not binary streak)
+- [x] Implement daily challenge generation and tracking
+- [x] Implement awareness score calculation
+- [x] Implement companion mood/emotion state machine
+- [x] Complete companion system unit tests
 
 ## P4 — UI foundation and navigation
 - [ ] Set up Material 3 theme (Dynamic Color + custom palette)
@@ -43,13 +43,13 @@
 - [ ] Complete Compose UI tests
 
 ## P5 — Digital awareness module
-- [ ] Implement Android UsageStats API integration
-- [ ] Implement screen time analytics with Vico charts
-- [ ] Implement mindful nudge notification system (configurable thresholds)
-- [ ] Implement focus session timer with companion animation
-- [ ] Implement digital sunset reminder system
-- [ ] Implement weekly digital awareness report
-- [ ] Complete digital awareness module tests
+- [x] Implement Android UsageStats API integration
+- [x] Implement screen time analytics with Vico charts
+- [x] Implement mindful nudge notification system (configurable thresholds)
+- [x] Implement focus session timer with companion animation
+- [x] Implement digital sunset reminder system
+- [x] Implement weekly digital awareness report
+- [x] Complete digital awareness module tests
 
 ## P6 — Personal growth module
 - [ ] Implement mood journal (emoji picker + note + Firestore sync)

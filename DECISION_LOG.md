@@ -132,3 +132,118 @@ This log records major architectural and product decisions for the AwareMate pro
 - **Decision:** Gradle Wrapper version 8.11.1 with optimized JVM memory arguments (`-Xmx512m -XX:MaxMetaspaceSize=256m`) and `kotlin.native.ignoreDisabledTargets=true`.
 - **Rationale:** Ensures Android Gradle Plugin 8.8.0 compatibility, low memory footprint on constrained host systems, and smooth KMP builds on non-macOS host environments.
 - **Consequences:** Executable `gradlew` / `gradlew.bat` provided in repository.
+
+### D-015: Firebase Integration Architecture & Client Tooling Baseline
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Preparing client build system for Firebase Auth, Firestore, Cloud Messaging, and Analytics without leaking credentials or blocking local developer workflows.
+- **Decision:** Apply Google Services plugin (`com.google.gms.google-services:4.4.2`) and Firebase BOM (`33.9.0`) in `:androidApp`. Provide `androidApp/google-services.json.example` template with dummy credentials for local/CI compilation while keeping `google-services.json` in `.gitignore`.
+- **Rationale:** Enables clean decoupled development; developers can immediately build and run unit tests without requiring a pre-configured Firebase backend project.
+- **Consequences:** CI and local onboarding copy the template file automatically if `google-services.json` is missing.
+
+### D-016: GitHub Actions Continuous Integration (CI) Workflow Strategy
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Automating build, lint, and test validation on every push and pull request to `main`.
+- **Decision:** GitHub Actions workflow (`.github/workflows/ci.yml`) on `ubuntu-latest` with JDK 17 (Temurin), official `gradle/actions/setup-gradle@v4` caching, running `lintDebug`, `test`, and `assembleDebug`.
+- **Rationale:** Fast feedback loop (<5 min execution), scoped strictly to current active target (Android/KMP shared) per AGENTS.md Section 9, preventing regressions.
+- **Consequences:** No extraneous deployment or multiplatform jobs until those target platforms enter project scope.
+
+### D-017: Local-First Data Architecture & Background Firestore Synchronization Strategy
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Designing data persistence and cloud synchronization to guarantee 100% offline capability, immediate UI responsiveness, and zero data loss on intermittent connectivity.
+- **Decision:** Establish Room KMP as the Single Source of Truth (`SSOT`). All write operations (`saveCompanion`, `insertMoodEntry`, `saveSession`, `completeChallenge`) write to Room first. Asynchronous background synchronization with Firestore occurs non-blockingly. Each entity maintains an `isSynced` flag; failure to reach Firestore never fails local UI actions.
+- **Conflict Resolution Strategy:**
+  1. **Append-Only Records (`MoodEntry`, `FocusSession`, `DailyChallenge`):** Keyed by client-generated UUIDs with timestamps. In case of concurrent sync, records are unioned/merged by ID with zero data loss.
+  2. **Mutable Singleton State (`Companion`, `UserPreferences`):** Resolved using **Last-Write-Wins (LWW)** based on `lastUpdatedEpochMs`. In the event of exact timestamp tie, local mutations take precedence over remote values to protect offline user engagement.
+- **Rationale:** Eliminates network latency from UI user experience, supports complete offline usage, and aligns with compassionate habit tracking where users can log mood and complete focus sessions anywhere.
+- **Consequences:** `SyncRepository` provides explicit methods to sync pending items when network connectivity is restored.
+
+### D-018: Room KMP Persistence Model & Multiplatform Database Driver
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Implementing multiplatform database with Kotlin 2.1+ and KSP.
+- **Decision:** Use Room 2.7.0 (`androidx.room`) with SQLite Bundled Driver (`androidx.sqlite:sqlite-bundled:2.5.0`), `@ConstructedBy(AwareMateDatabaseConstructor::class)`, and KSP code generation.
+- **Rationale:** Standardized Room DAO patterns across Android and native KMP targets without JVM dependencies.
+
+### D-019: DataStore Preferences Multiplatform Architecture
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Storing lightweight user settings (onboarding flag, notification thresholds, bedtime reminder time, theme mode).
+- **Decision:** Implement `PreferencesRepository` backed by `androidx.datastore.preferences.core.DataStore<Preferences>` with `PreferenceDataStoreFactory.createWithPath`.
+- **Rationale:** Type-safe, asynchronous Flow-based preferences persistence across KMP targets.
+
+### D-020: Companion Growth Stage Thresholds & Evolution Rules
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Establishing clear XP boundaries for companion evolution stages aligned with the plant metaphor.
+- **Decision:** Stages defined as `SEED` (0..99 XP), `SPROUT` (100..299 XP), `BLOOM` (300..599 XP), `TREE` (600..999 XP), `ANCIENT_TREE` (1000+ XP). XP earned across four core categories (`HAPPINESS`, `ENERGY`, `WISDOM`, `CREATIVITY`) sums into total XP.
+- **Rationale:** Aligns with Erasmus+ youth competencies and anti-shame design; stage progression is purely accumulative and irreversible downwards (companion never regresses in stage).
+
+### D-021: Non-Punitive Momentum Decay & Comeback Bonus
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Implementing retention gamification without punitive streaks or shame triggers.
+- **Decision:** Replace binary streak resets with gradual exponential decay ($score \times 0.90^{daysInactive}$) on a 0.0..100.0 scale. A 1-day lapse results in gentle 10% decay (90.0) rather than a complete zero reset. A Comeback Bonus ($1.5\times$ activity gain) is granted upon return after $\ge 2$ inactive days to accelerate recovery.
+- **Rationale:** Strict adherence to AGENTS.md Compassionate UX principles; supports intrinsic motivation and long-term user retention.
+
+### D-022: Pure Companion Emotional State Machine
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Modeling companion emotional reactions to user actions, inactivity, and circadian rhythms.
+- **Decision:** Pure state machine with emotions `PEACEFUL`, `CURIOUS`, `CHEERFUL`, `TIRED`, `RESTING`. Inactivity transitions companion to `RESTING` (peacefully napping, never sad/guilty). Deep focus sessions and challenge completions trigger `CHEERFUL`. Re-opening after absence triggers `CURIOUS` (welcoming).
+- **Rationale:** Pure transition function guarantees deterministic, easily testable, anti-anxiety emotional feedback.
+
+## Phase 4 Architectural Decisions
+
+### D-023: Material 3 Organic Design System & Dynamic Color Integration
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Establishing visual design and color identity that reinforces anti-shame, compassionate wellness principles while supporting Android 12+ wallpaper dynamic theming.
+- **Decision:** Built an organic Material 3 theme (`AwareMateTheme`) using deep forest green (`#2D5A27`), warm sage (`#8FBC8F`), and amber highlights, with gentle coral (`#E07A5F`) for error/warning states (eliminating aggressive high-saturation red). `rememberDynamicColorScheme` hook leverages Android 12+ (`SDK_INT >= 31`) system color extraction when enabled, with seamless fallback to custom light/dark schemes.
+- **Rationale:** Warm, nature-inspired palette fosters mental calm and alignment with the plant companion metaphor; gentle coral alerts inform without inducing panic or guilt.
+- **Consequences:** All interactive elements and custom cards adopt rounded organic shapes (`16.dp`–`24.dp` corners) and standard Material 3 color roles.
+
+### D-024: Voyager Multiplatform Navigation & MVI ScreenModel Architecture
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Selecting navigation structure and state management pattern for multi-tab dashboard, onboarding flow, and nested modal screens.
+- **Decision:** Implemented Voyager navigation with `RootScreen` splash router checking `PreferencesRepository.onboardingCompleted`. After onboarding, transitions to `MainScreen` hosting a 5-tab `NavigationBar` (Home, Companion, Focus, Growth, Settings). Each screen pairs with a Voyager `ScreenModel` managing unidirectional MVI (`StateFlow<State>` and `handleIntent(Intent)`).
+- **Rationale:** Voyager provides clean decoupled screen state lifecycles with built-in Koin integration (`koinScreenModel()`), cross-platform backstack management, and transitions.
+- **Consequences:** ScreenModels live in `commonMain` and can be tested identically across JVM and native targets without Compose runtime mocking.
+
+### D-025: Pure Compose Canvas Companion Rendering Engine
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Rendering the gamified companion character across 5 growth stages and 5 emotional states without relying on heavy external asset files or proprietary vector engines.
+- **Decision:** Built a pure Compose `Canvas` drawing engine (`CompanionCanvas`) with mathematical bezier curves, layered lighting gradients, procedural particles (sparkles, sleepy 'Z's, ambient fireflies), and multi-layer animations (`rememberInfiniteTransition` for breathing pulse, leaf sway, and spring tap bounce).
+- **Rationale:** 100% lightweight, scalable to any display density, zero bitmap dependencies, instant load times, and dynamic emotional facial variations (open eyes, cheerful smiles, peaceful blinks, tired eye-curves).
+- **Consequences:** Every visual attribute of the companion is parameterized and reactive to domain state changes with built-in accessibility semantic descriptions.
+
+## Phase 5 Architectural Decisions
+
+### D-026: Android UsageStats API On-Device Aggregation & Permission Bridge
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Accessing device app usage without violating user privacy or failing permission checks. `PACKAGE_USAGE_STATS` is a special system permission requiring navigation to Android Settings rather than standard runtime dialogs.
+- **Decision:** Created `hasUsageStatsPermission(context)` via `AppOpsManager.checkOpNoThrow(OPSTR_GET_USAGE_STATS)` and `openUsageAccessSettings(context)` directing users to `Settings.ACTION_USAGE_ACCESS_SETTINGS`. Aggregated metrics are stored in Room's `ScreenTimeSnapshotEntity` 100% on-device (zero telemetry/transmission), respecting GDPR and local-first principles.
+- **Rationale:** Transparent consent flow and complete privacy protection while maintaining accurate screen time tracking.
+- **Consequences:** UI displays clear guidance when access is missing, offering an empathetic explanation of on-device privacy.
+
+### D-027: Vico Multiplatform Chart Architecture with Native Android & Canvas Fallback
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Rendering weekly screen time analytics charts across multiplatform targets while leveraging modern Vico 2.0.3 charting on Android.
+- **Decision:** Defined `expect @Composable fun ScreenTimeBarChart(data: List<DailyScreenTimeData>, dailyGoalMinutes: Int)`. Implemented with Vico (`CartesianChartHost`, `rememberColumnCartesianLayer`, `HorizontalAxis.rememberBottom`, `VerticalAxis.rememberStart`) on Android, with a pure Compose Canvas fallback on iOS.
+- **Rationale:** Delivers high-performance native Cartesian charts with smooth animations on Android while keeping the shared presentation layer 100% multiplatform compliant.
+- **Consequences:** Allows instant cross-platform compilation while maximizing native visual fidelity on the primary Android target.
+
+### D-028: Non-Punitive Mindful Nudge & Digital Sunset Architecture
+- **Date:** 2026-09-02
+- **Status:** Accepted
+- **Context:** Triggering reminder notifications for continuous usage and evening wind-down without guilt, shame, or cognitive overload.
+- **Decision:** Implemented `MindfulNudgeRuleEngine` enforcing continuous usage thresholds (30, 45, 60m), daily screen time goals, 30-minute minimum cooldown intervals, and strict muting during active `FocusSession`s. All notification messages (`MindfulNudgeCatalog`) are vetted against strict anti-guilt rules (zero shame words like "failed", "too much", "wasted"). Implemented `DigitalSunsetUseCase` calculating a 45-minute pre-bedtime sunset window with gentle twilight banners and companion `RESTING` sleep states.
+- **Rationale:** Direct adherence to AGENTS.md Compassionate UX principles; nurtures self-awareness and healthy transitions rather than resentment or anxiety.
+- **Consequences:** Users can customize bedtime and nudge thresholds in Settings with complete confidence in supportive feedback.
+
