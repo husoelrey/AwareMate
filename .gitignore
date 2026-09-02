@@ -1,0 +1,40 @@
+# Gradle and Build Outputs
+.gradle/
+build/
+**/build/
+bin/
+out/
+
+# Android Studio & IntelliJ IDEA (IDE-neutral policy per AGENTS.md Section 7)
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+.navigation/
+captures/
+local.properties
+.externalNativeBuild/
+.cxx/
+
+# Crash and JVM logs
+hs_err_pid*.log
+replay_pid*.log
+*.log
+
+# Secrets & Service Configurations
+google-services.json
+*.keystore
+*.jks
+credentials.json
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# Kotlin Multiplatform
+.kotlin/
+.konan/
+
+# Package manager lock / scratch files
+scratch/
