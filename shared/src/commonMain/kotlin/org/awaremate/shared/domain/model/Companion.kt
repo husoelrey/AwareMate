@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 enum class CompanionStage {
     SEED,
     SPROUT,
-    SAPLING,
-    BLOOMING_TREE,
+    BLOOM,
+    TREE,
     ANCIENT_TREE
 }
 
@@ -21,11 +21,24 @@ enum class CompanionEmotion {
 }
 
 @Serializable
+enum class CompanionCategory {
+    HAPPINESS,
+    ENERGY,
+    WISDOM,
+    CREATIVITY
+}
+
+@Serializable
 data class Companion(
-    val id: String,
-    val name: String,
+    val id: String = "primary",
+    val name: String = "Sprout",
     val stage: CompanionStage = CompanionStage.SEED,
     val emotion: CompanionEmotion = CompanionEmotion.PEACEFUL,
     val experiencePoints: Int = 0,
-    val momentumScore: Double = 1.0
+    val momentumScore: Double = 100.0,
+    val happinessXp: Int = 0,
+    val energyXp: Int = 0,
+    val wisdomXp: Int = 0,
+    val creativityXp: Int = 0,
+    val lastUpdatedEpochMs: Long = 0L
 )
