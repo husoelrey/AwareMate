@@ -254,3 +254,68 @@ class FakeScreenTimeDao : org.awaremate.shared.data.local.dao.ScreenTimeDao {
         snapshots.value = snapshots.value - dateString
     }
 }
+
+class FakeHobbyDao : org.awaremate.shared.data.local.dao.HobbyDao {
+    private val hobbies = MutableStateFlow<Map<String, org.awaremate.shared.data.local.entity.HobbyEntity>>(emptyMap())
+
+    override fun getAllHobbiesFlow(): Flow<List<org.awaremate.shared.data.local.entity.HobbyEntity>> =
+        hobbies.map { it.values.toList() }
+
+    override fun getBookmarkedHobbiesFlow(): Flow<List<org.awaremate.shared.data.local.entity.HobbyEntity>> =
+        hobbies.map { it.values.filter { h -> h.isBookmarked } }
+
+    override fun getHobbiesByCategoryFlow(category: String): Flow<List<org.awaremate.shared.data.local.entity.HobbyEntity>> =
+        hobbies.map { it.values.filter { h -> h.category == category } }
+
+    override suspend fun getHobbyById(id: String): org.awaremate.shared.data.local.entity.HobbyEntity? =
+        hobbies.value[id]
+
+    override suspend fun insertDefaultHobbies(hobbies: List<org.awaremate.shared.data.local.entity.HobbyEntity>) {
+        val current = this.hobbies.value.toMutableMap()
+        hobbies.forEach { current.putIfAbsent(it.id, it) }
+        this.hobbies.value = current
+    }
+
+    override suspend fun setBookmark(id: String, bookmarked: Boolean) {
+        val current = hobbies.value[id] ?: return
+        hobbies.value = hobbies.value + (id to current.copy(isBookmarked = bookmarked))
+    }
+
+    override suspend fun incrementSessionCount(id: String, timestamp: Long) {
+        val current = hobbies.value[id] ?: return
+        hobbies.value = hobbies.value + (id to current.copy(
+            sessionsCompleted = current.sessionsCompleted + 1,
+            lastCompletedEpochMs = timestamp
+        ))
+    }
+
+    override suspend fun getHobbyCount(): Int = hobbies.value.size
+}
+
+class FakeSelfDiscoveryPromptDao : org.awaremate.shared.data.local.dao.SelfDiscoveryPromptDao {
+    private val prompts = MutableStateFlow<Map<String, org.awaremate.shared.data.local.entity.SelfDiscoveryPromptEntity>>(emptyMap())
+
+    override fun getAllPromptsFlow(): Flow<List<org.awaremate.shared.data.local.entity.SelfDiscoveryPromptEntity>> =
+        prompts.map { it.values.toList() }
+
+    override suspend fun getPromptById(id: String): org.awaremate.shared.data.local.entity.SelfDiscoveryPromptEntity? =
+        prompts.value[id]
+
+    override suspend fun insertDefaultPrompts(prompts: List<org.awaremate.shared.data.local.entity.SelfDiscoveryPromptEntity>) {
+        val current = this.prompts.value.toMutableMap()
+        prompts.forEach { current.putIfAbsent(it.id, it) }
+        this.prompts.value = current
+    }
+
+    override suspend fun savePromptReflection(id: String, reflection: String?, timestamp: Long) {
+        val current = prompts.value[id] ?: return
+        prompts.value = prompts.value + (id to current.copy(
+            isAcknowledged = true,
+            userReflection = reflection,
+            lastAnsweredEpochMs = timestamp
+        ))
+    }
+
+    override suspend fun getPromptCount(): Int = prompts.value.size
+}
+

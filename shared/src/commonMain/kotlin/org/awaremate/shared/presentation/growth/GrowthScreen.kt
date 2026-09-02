@@ -1,6 +1,7 @@
 package org.awaremate.shared.presentation.growth
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,14 +15,22 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
@@ -30,145 +39,295 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.koin.koinScreenModel
+import org.awaremate.shared.presentation.growth.components.BreathingGuideDialog
+import org.awaremate.shared.presentation.growth.components.HobbyDiscoverySection
+import org.awaremate.shared.presentation.growth.components.MoodCheckInDialog
+import org.awaremate.shared.presentation.growth.components.SelfDiscoveryCard
+import org.awaremate.shared.presentation.growth.components.WeeklyMoodInsightsCard
+import org.awaremate.shared.presentation.home.components.DailySparksCard
 
 class GrowthScreen : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
+        val screenModel = koinScreenModel<GrowthScreenModel>()
+        val state by screenModel.state.collectAsState()
+        val snackbarHostState = remember { SnackbarHostState() }
+
+        LaunchedEffect(state.snackbarMessage) {
+            state.snackbarMessage?.let {
+                snackbarHostState.showSnackbar(it)
+                screenModel.handleIntent(GrowthIntent.ClearSnackbar)
+            }
+        }
+
         Scaffold(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(
-                            text = "Personal Growth",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Column {
+                            Text(
+                                text = "Personal Growth",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Nurture awareness, rhythm & offline sparks",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     )
                 )
             },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             modifier = Modifier
                 .fillMaxSize()
                 .semantics {
                     contentDescription = "Personal Growth Screen"
                 }
         ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(20.dp)
-            ) {
-                // Mood Reflection Card
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)),
-                    modifier = Modifier.fillMaxWidth()
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "💛", fontSize = 24.sp)
-                            Spacer(modifier = Modifier.padding(4.dp))
-                            Text(
-                                text = "How are you feeling right now?",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                    CircularProgressIndicator(
+                        modifier = Modifier.semantics {
+                            contentDescription = "Loading personal growth data"
                         }
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "Track your emotional climate without judgement. Every feeling is welcome here.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = { /* Connected in P6 mood journal */ },
-                            modifier = Modifier.semantics {
-                                contentDescription = "Log today's mood check-in"
+                    )
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                ) {
+                    // 1. Mood Check-in Card
+                    Card(
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .semantics {
+                                contentDescription = "Daily mood check-in section"
                             }
-                        ) {
-                            Text("Log Mood Check-in")
+                    ) {
+                        Column(modifier = Modifier.padding(18.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = state.todayMood?.emoji ?: "💛",
+                                        fontSize = 26.sp
+                                    )
+                                    Spacer(modifier = Modifier.padding(4.dp))
+                                    Text(
+                                        text = if (state.todayMood != null) "Today's Feeling" else "How are you feeling?",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+
+                                if (state.todayMood != null) {
+                                    SuggestionChip(
+                                        onClick = {},
+                                        label = { Text("Logged Today ✓", fontSize = 11.sp) }
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            if (state.todayMood != null) {
+                                val mood = state.todayMood!!
+                                Text(
+                                    text = "Energy Battery: ${mood.energyLevel}/5" +
+                                        (mood.note?.let { " • \"$it\"" } ?: ""),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                if (mood.tags.isNotEmpty()) {
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = "Present: " + mood.tags.joinToString(", "),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(12.dp))
+                                OutlinedButton(
+                                    onClick = { screenModel.handleIntent(GrowthIntent.OpenMoodDialog) },
+                                    modifier = Modifier.semantics {
+                                        contentDescription = "Update today's mood check-in"
+                                    }
+                                ) {
+                                    Text("Update Check-in")
+                                }
+                            } else {
+                                Text(
+                                    text = "Track your emotional climate without judgement. Every feeling is welcome here.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Button(
+                                    onClick = { screenModel.handleIntent(GrowthIntent.OpenMoodDialog) },
+                                    modifier = Modifier.semantics {
+                                        contentDescription = "Log today's mood check-in"
+                                    }
+                                ) {
+                                    Text("Log Mood Check-in (+15 XP)")
+                                }
+                            }
                         }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                // Breathing Guide Card
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f)),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "🌬️", fontSize = 24.sp)
-                            Spacer(modifier = Modifier.padding(4.dp))
-                            Text(
-                                text = "Breath & Grounding",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "Take 60 seconds to step away from screens and connect with the breath.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        OutlinedButton(
-                            onClick = { /* Connected in P6 */ },
-                            modifier = Modifier.semantics {
-                                contentDescription = "Start 1-minute breathing exercise"
+                    // 2. Breath & Grounding Card
+                    Card(
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.45f)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .semantics {
+                                contentDescription = "Breath and Grounding exercise card"
                             }
-                        ) {
-                            Text("Start 1-min Breathing")
+                    ) {
+                        Column(modifier = Modifier.padding(18.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(text = "🌬️", fontSize = 26.sp)
+                                    Spacer(modifier = Modifier.padding(4.dp))
+                                    Text(
+                                        text = "Breath & Grounding",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                SuggestionChip(
+                                    onClick = {},
+                                    label = { Text("1-2 min", fontSize = 11.sp) }
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = "Take a mindful pause with animated radial pacing (Box Breathing, 4-7-8, or Grounding Reset).",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = { screenModel.handleIntent(GrowthIntent.OpenBreathingDialog) },
+                                modifier = Modifier.semantics {
+                                    contentDescription = "Start guided breathing exercise"
+                                }
+                            ) {
+                                Text("Start Breathing Guide (+20 XP)")
+                            }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // 3. Curiosity-Driven Self-Discovery Prompt Card
+                    SelfDiscoveryCard(
+                        prompt = state.currentPrompt,
+                        currentIndex = state.currentPromptIndex,
+                        totalCount = state.prompts.size,
+                        onNext = { screenModel.handleIntent(GrowthIntent.NextSelfDiscoveryPrompt) },
+                        onPrevious = { screenModel.handleIntent(GrowthIntent.PreviousSelfDiscoveryPrompt) },
+                        onAcknowledge = { promptId, reflection ->
+                            screenModel.handleIntent(GrowthIntent.AcknowledgeSelfDiscovery(promptId, reflection))
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // 4. Offline Hobby Discovery & Personalized Suggestions
+                    HobbyDiscoverySection(
+                        hobbies = if (state.selectedHobbyCategory == null) state.recommendedHobbies else state.allHobbies.filter { it.category == state.selectedHobbyCategory },
+                        selectedCategory = state.selectedHobbyCategory,
+                        onSelectCategory = { screenModel.handleIntent(GrowthIntent.SelectHobbyCategory(it)) },
+                        onToggleBookmark = { id, isBookmarked ->
+                            screenModel.handleIntent(GrowthIntent.ToggleHobbyBookmark(id, isBookmarked))
+                        },
+                        onCompleteSession = { hobby ->
+                            screenModel.handleIntent(GrowthIntent.CompleteHobbySession(hobby))
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // 5. Daily Micro-Challenges
+                    DailySparksCard(
+                        challenges = state.dailyChallenges,
+                        onCompleteChallenge = { challenge ->
+                            screenModel.handleIntent(GrowthIntent.CompleteChallenge(challenge))
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // 6. Weekly Mood & Growth Insights
+                    WeeklyMoodInsightsCard(insights = state.weeklyInsights)
+
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Hobby Discovery Card
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "🎨", fontSize = 24.sp)
-                            Spacer(modifier = Modifier.padding(4.dp))
-                            Text(
-                                text = "Offline Hobby Explorer",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
+            // Dialogs
+            if (state.isMoodDialogOpen) {
+                MoodCheckInDialog(
+                    onDismiss = { screenModel.handleIntent(GrowthIntent.DismissMoodDialog) },
+                    onSubmit = { emoji, moodScore, energyLevel, note, tags ->
+                        screenModel.handleIntent(
+                            GrowthIntent.SubmitMood(
+                                emoji = emoji,
+                                moodScore = moodScore,
+                                energyLevel = energyLevel,
+                                note = note,
+                                tags = tags
                             )
-                        }
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "Discover fulfilling offline creative hobbies to replace endless doom-scrolling.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = { /* Connected in P6 */ },
-                            modifier = Modifier.semantics {
-                                contentDescription = "Discover mindful offline hobbies"
-                            }
-                        ) {
-                            Text("Explore Hobbies")
-                        }
                     }
-                }
+                )
+            }
+
+            if (state.isBreathingDialogOpen) {
+                BreathingGuideDialog(
+                    state = state.breathingState,
+                    onStart = { pattern, cycles ->
+                        screenModel.handleIntent(GrowthIntent.StartBreathing(pattern, cycles))
+                    },
+                    onPause = { screenModel.handleIntent(GrowthIntent.PauseBreathing) },
+                    onResume = { screenModel.handleIntent(GrowthIntent.ResumeBreathing) },
+                    onStop = { screenModel.handleIntent(GrowthIntent.StopBreathing) },
+                    onDismiss = { screenModel.handleIntent(GrowthIntent.DismissBreathingDialog) }
+                )
             }
         }
     }

@@ -247,3 +247,30 @@ This log records major architectural and product decisions for the AwareMate pro
 - **Rationale:** Direct adherence to AGENTS.md Compassionate UX principles; nurtures self-awareness and healthy transitions rather than resentment or anxiety.
 - **Consequences:** Users can customize bedtime and nudge thresholds in Settings with complete confidence in supportive feedback.
 
+## Phase 6 Architectural Decisions
+
+### D-029: Room KMP Persistence Model for Offline Hobbies & Self-Discovery Prompts
+- **Date:** 2026-09-03
+- **Status:** Accepted
+- **Context:** Delivering 100% offline, persistent storage for offline hobby exploration, bookmarking, session completion, and curiosity-driven self-discovery reflections per PROJECT_SPEC.md Section 9.
+- **Decision:** Expanded `AwareMateDatabase` to version 2 with `HobbyEntity` and `SelfDiscoveryPromptEntity` tables backed by `HobbyDao` and `SelfDiscoveryPromptDao`. Enabled `.fallbackToDestructiveMigration(true)` during active development across Android and iOS builders. Repositories automatically populate initial offline seed catalogs (`HobbyCatalog`, `SelfDiscoveryCatalog`) on first launch.
+- **Rationale:** Guarantees zero network dependency for habit and growth tracking, immediate local reactivity, and type-safe query flows.
+- **Consequences:** Hobbies and reflection observations persist reliably across app restarts without remote server latency.
+
+### D-030: Pure Compose Canvas Radial Breathing Guide Engine
+- **Date:** 2026-09-03
+- **Status:** Accepted
+- **Context:** Providing animated pacing guidance for calming exercises (Box Breathing, 4-7-8, Grounding Reset) without heavy third-party animation libraries or video assets.
+- **Decision:** Built an animated radial visualizer using Compose Canvas, `animateFloatAsState`, radial gradients, and a multi-ring glowing halo. State is driven by a coroutine-backed state machine (`BreathingSessionState`) emitting 100ms pacing ticks.
+- **Rationale:** 100% lightweight, battery-efficient, accessible with live semantic descriptions, smoothly scalable across all display densities, and awards XP (+20 Energy XP) directly to the companion upon completion.
+- **Consequences:** Smooth, soothing visual feedback that naturally transitions companion emotion to `PEACEFUL`.
+
+### D-031: Compassionate Mood Journaling & Anti-Shame Weekly Insights Engine
+- **Date:** 2026-09-03
+- **Status:** Accepted
+- **Context:** Empowering youth to track emotional climates without anxiety, fear of failure, or guilt from skipping days or feeling down.
+- **Decision:** Implemented `MoodCheckInDialog` offering a 5-level non-stigmatizing emoji picker (`😄`, `😊`, `🌿`, `🥱`, `🌧️`), energy slider (1-5), optional reflection notes, and contextual tags. Synchronized asynchronously with Firestore via `CloudSyncService`. Designed `GetWeeklyMoodInsightsUseCase` to aggregate the last 7 days of entries with a visual rhythm bar and compassionate narrative takeaways that validate all feelings ("every season matters 🌧️").
+- **Rationale:** Strict adherence to AGENTS.md Section 4 (Compassionate UX, zero dark patterns, no shame-driven metrics).
+- **Consequences:** Fosters psychological safety and sustainable self-reflection habits.
+
+

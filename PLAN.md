@@ -52,14 +52,14 @@
 - [x] Complete digital awareness module tests
 
 ## P6 — Personal growth module
-- [ ] Implement mood journal (emoji picker + note + Firestore sync)
-- [ ] Implement breath & ground exercises (animated breathing guide)
-- [ ] Implement hobby discovery system (categorized database, personalized suggestions)
-- [ ] Implement daily micro-challenges (generation, completion, XP rewards)
-- [ ] Implement reflection prompts
-- [ ] Implement "Self-Discovery" prompt card type — curated self-awareness questions about habitual behaviors (e.g. noticing a one-sided habit you never registered). Framed as discovery, not comparison: no fabricated or unsourced statistics, no "X% of people..." framing that could read as a pass/fail test.
-- [ ] Implement weekly insights (mood trends, achievements)
-- [ ] Complete personal growth module tests
+- [x] Implement mood journal (emoji picker + note + Firestore sync)
+- [x] Implement breath & ground exercises (animated breathing guide)
+- [x] Implement hobby discovery system (categorized database, personalized suggestions)
+- [x] Implement daily micro-challenges (generation, completion, XP rewards)
+- [x] Implement reflection prompts
+- [x] Implement "Self-Discovery" prompt card type — curated self-awareness questions about habitual behaviors (e.g. noticing a one-sided habit you never registered). Framed as discovery, not comparison: no fabricated or unsourced statistics, no "X% of people..." framing that could read as a pass/fail test.
+- [x] Implement weekly insights (mood trends, achievements)
+- [x] Complete personal growth module tests
 
 ## P7 — Polish and release readiness
 - [ ] Implement error handling and offline-first behavior

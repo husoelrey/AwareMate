@@ -12,6 +12,7 @@ fun getAndroidDatabaseBuilder(context: Context): RoomDatabase.Builder<AwareMateD
         context = appContext,
         name = dbFile.absolutePath
     ).setDriver(BundledSQLiteDriver())
+        .fallbackToDestructiveMigration(true)
 }
 
 fun createAndroidInMemoryDatabase(context: Context): AwareMateDatabase {

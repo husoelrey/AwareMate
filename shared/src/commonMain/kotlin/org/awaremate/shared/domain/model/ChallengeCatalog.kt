@@ -31,6 +31,12 @@ object ChallengeCatalog {
             category = CompanionCategory.HAPPINESS,
             xpReward = 20
         ),
+        ChallengeTemplate(
+            title = "Appreciation Whisper",
+            description = "Express genuine appreciation to someone for something small they did.",
+            category = CompanionCategory.HAPPINESS,
+            xpReward = 25
+        ),
 
         // ENERGY
         ChallengeTemplate(
@@ -48,6 +54,12 @@ object ChallengeCatalog {
         ChallengeTemplate(
             title = "Hydration First",
             description = "Drink a full glass of water before opening any social media feeds.",
+            category = CompanionCategory.ENERGY,
+            xpReward = 20
+        ),
+        ChallengeTemplate(
+            title = "Sky Gaze Pause",
+            description = "Spend 3 uninterrupted minutes observing clouds or stars through a window.",
             category = CompanionCategory.ENERGY,
             xpReward = 20
         ),
@@ -71,6 +83,12 @@ object ChallengeCatalog {
             category = CompanionCategory.WISDOM,
             xpReward = 25
         ),
+        ChallengeTemplate(
+            title = "Single-Task Flow",
+            description = "Complete one single chore or study task with all browser tabs closed.",
+            category = CompanionCategory.WISDOM,
+            xpReward = 25
+        ),
 
         // CREATIVITY
         ChallengeTemplate(
@@ -88,6 +106,12 @@ object ChallengeCatalog {
         ChallengeTemplate(
             title = "Fresh Idea Log",
             description = "Write down one creative idea or dream in your personal notebook.",
+            category = CompanionCategory.CREATIVITY,
+            xpReward = 20
+        ),
+        ChallengeTemplate(
+            title = "Sensory Exploration",
+            description = "Notice and write down 3 distinct natural textures you touch today.",
             category = CompanionCategory.CREATIVITY,
             xpReward = 20
         )

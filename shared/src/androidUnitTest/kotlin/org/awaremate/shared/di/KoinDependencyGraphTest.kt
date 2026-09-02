@@ -105,11 +105,23 @@ class KoinDependencyGraphTest : KoinTest {
         assertNotNull(get<org.awaremate.shared.domain.usecase.sunset.DigitalSunsetUseCase>())
         assertNotNull(get<org.awaremate.shared.domain.usecase.awareness.GetWeeklyAwarenessReportUseCase>())
 
+        // Verify P6 DAOs & Repositories resolve
+        assertNotNull(get<org.awaremate.shared.data.local.dao.HobbyDao>())
+        assertNotNull(get<org.awaremate.shared.data.local.dao.SelfDiscoveryPromptDao>())
+        assertNotNull(get<org.awaremate.shared.domain.repository.HobbyRepository>())
+        assertNotNull(get<org.awaremate.shared.domain.repository.SelfDiscoveryRepository>())
+
+        // Verify P6 Use Cases resolve
+        assertNotNull(get<org.awaremate.shared.domain.usecase.growth.LogMoodUseCase>())
+        assertNotNull(get<org.awaremate.shared.domain.usecase.growth.GetPersonalizedHobbiesUseCase>())
+        assertNotNull(get<org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodInsightsUseCase>())
+
         // Verify ScreenModels resolve
         assertNotNull(get<org.awaremate.shared.presentation.onboarding.OnboardingScreenModel>())
         assertNotNull(get<org.awaremate.shared.presentation.home.HomeScreenModel>())
         assertNotNull(get<org.awaremate.shared.presentation.companion.CompanionScreenModel>())
         assertNotNull(get<org.awaremate.shared.presentation.focus.FocusScreenModel>())
+        assertNotNull(get<org.awaremate.shared.presentation.growth.GrowthScreenModel>())
         assertNotNull(get<org.awaremate.shared.presentation.settings.SettingsScreenModel>())
         assertNotNull(get<org.awaremate.shared.presentation.profile.ProfileScreenModel>())
     }

@@ -35,6 +35,8 @@ val commonModule = module {
     single { get<AwareMateDatabase>().focusSessionDao() }
     single { get<AwareMateDatabase>().dailyChallengeDao() }
     single { get<AwareMateDatabase>().screenTimeDao() }
+    single { get<AwareMateDatabase>().hobbyDao() }
+    single { get<AwareMateDatabase>().selfDiscoveryPromptDao() }
 
     // DataStore Preferences Repository
     single<PreferencesRepository> { PreferencesRepositoryImpl(dataStore = get()) }
@@ -47,6 +49,12 @@ val commonModule = module {
     single<DailyChallengeRepository> { DailyChallengeRepositoryImpl(dailyChallengeDao = get(), cloudSyncService = getOrNull()) }
     single<org.awaremate.shared.domain.repository.UsageStatsRepository> {
         org.awaremate.shared.data.repository.UsageStatsRepositoryImpl(screenTimeDao = get())
+    }
+    single<org.awaremate.shared.domain.repository.HobbyRepository> {
+        org.awaremate.shared.data.repository.HobbyRepositoryImpl(hobbyDao = get())
+    }
+    single<org.awaremate.shared.domain.repository.SelfDiscoveryRepository> {
+        org.awaremate.shared.data.repository.SelfDiscoveryRepositoryImpl(promptDao = get())
     }
 
     // Auth & Sync Repositories
@@ -93,6 +101,18 @@ val commonModule = module {
         )
     }
 
+    // P6 Personal Growth Use Cases
+    single {
+        org.awaremate.shared.domain.usecase.growth.LogMoodUseCase(
+            moodRepository = get(),
+            addExperienceUseCase = get(),
+            updateMomentumUseCase = get(),
+            updateCompanionEmotionUseCase = get()
+        )
+    }
+    single { org.awaremate.shared.domain.usecase.growth.GetPersonalizedHobbiesUseCase() }
+    single { org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodInsightsUseCase() }
+
     // Presentation ScreenModels
     factory { OnboardingScreenModel(preferencesRepository = get(), saveCompanionUseCase = get()) }
     factory {
@@ -124,6 +144,21 @@ val commonModule = module {
             addExperienceUseCase = get(),
             updateMomentumUseCase = get(),
             calculateGrowthStageUseCase = get()
+        )
+    }
+    factory {
+        org.awaremate.shared.presentation.growth.GrowthScreenModel(
+            moodRepository = get(),
+            hobbyRepository = get(),
+            selfDiscoveryRepository = get(),
+            dailyChallengeRepository = get(),
+            logMoodUseCase = get(),
+            getPersonalizedHobbiesUseCase = get(),
+            getWeeklyMoodInsightsUseCase = get(),
+            addExperienceUseCase = get(),
+            updateMomentumUseCase = get(),
+            updateCompanionEmotionUseCase = get(),
+            completeDailyChallengeUseCase = get()
         )
     }
     factory { SettingsScreenModel(preferencesRepository = get()) }

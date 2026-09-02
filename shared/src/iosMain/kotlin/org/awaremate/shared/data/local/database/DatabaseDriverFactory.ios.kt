@@ -11,4 +11,5 @@ fun getIosDatabaseBuilder(): RoomDatabase.Builder<AwareMateDatabase> {
         name = dbFilePath,
         factory = { AwareMateDatabaseConstructor.initialize() }
     ).setDriver(BundledSQLiteDriver())
+        .fallbackToDestructiveMigration(true)
 }

@@ -261,4 +261,76 @@ class ComposeUiAccessibilityTest {
         onNodeWithContentDescription("Screen time weekly bar chart powered by Vico. 7 days breakdown.")
             .assertIsDisplayed()
     }
+
+    @Test
+    fun testSelfDiscoveryCardHasAccessibleControls() = runComposeUiTest {
+        var acknowledged = false
+        val prompt = org.awaremate.shared.domain.model.SelfDiscoveryPrompt(
+            id = "sd_1",
+            category = "Pocket Reflex",
+            question = "When reaching for phone, what was your mind doing?",
+            curiosityHint = "Observe pause in stimulation"
+        )
+
+        setContent {
+            AwareMateTheme(dynamicColor = false) {
+                org.awaremate.shared.presentation.growth.components.SelfDiscoveryCard(
+                    prompt = prompt,
+                    currentIndex = 0,
+                    totalCount = 8,
+                    onNext = {},
+                    onPrevious = {},
+                    onAcknowledge = { _, _ -> acknowledged = true }
+                )
+            }
+        }
+
+        onNodeWithContentDescription("Self-Discovery prompt card. Question: When reaching for phone, what was your mind doing?")
+            .assertIsDisplayed()
+
+        onNodeWithContentDescription("Acknowledge noticing this habit pattern")
+            .assertIsDisplayed()
+            .performClick()
+
+        assertTrue(acknowledged)
+    }
+
+    @Test
+    fun testHobbyDiscoverySectionHasAccessibleActions() = runComposeUiTest {
+        var sessionLogged = false
+        var bookmarkToggled = false
+        val sampleHobby = org.awaremate.shared.domain.model.Hobby(
+            id = "h1",
+            title = "Watercolor Doodling",
+            category = org.awaremate.shared.domain.model.HobbyCategory.CREATIVE_ARTS,
+            description = "Gentle color blending",
+            beginnerTip = "Use water",
+            isBookmarked = false
+        )
+
+        setContent {
+            AwareMateTheme(dynamicColor = false) {
+                org.awaremate.shared.presentation.growth.components.HobbyDiscoverySection(
+                    hobbies = listOf(sampleHobby),
+                    selectedCategory = null,
+                    onSelectCategory = {},
+                    onToggleBookmark = { _, _ -> bookmarkToggled = true },
+                    onCompleteSession = { sessionLogged = true }
+                )
+            }
+        }
+
+        onNodeWithContentDescription("Hobby: Watercolor Doodling. Gentle color blending")
+            .assertIsDisplayed()
+
+        onNodeWithContentDescription("Bookmark hobby")
+            .assertIsDisplayed()
+            .performClick()
+        assertTrue(bookmarkToggled)
+
+        onNodeWithContentDescription("Log completed offline session for Watercolor Doodling")
+            .assertIsDisplayed()
+            .performClick()
+        assertTrue(sessionLogged)
+    }
 }

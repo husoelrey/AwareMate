@@ -27,9 +27,10 @@ class MoodRepositoryImpl(
 
     override suspend fun insertMoodEntry(entry: MoodEntry): Result<Unit> = runCatching {
         moodEntryDao.insertMoodEntry(MoodEntryEntity.fromDomain(entry.copy(isSynced = false)))
-        if (cloudSyncService != null) {
-            val syncResult = cloudSyncService.backupMoodEntry(entry)
-            if (syncResult.isSuccess) {
+        val syncService = cloudSyncService
+        if (syncService != null) {
+            val syncResult = runCatching { syncService.backupMoodEntry(entry) }.getOrNull()
+            if (syncResult?.isSuccess == true) {
                 moodEntryDao.markAsSynced(entry.id, true)
             }
         }

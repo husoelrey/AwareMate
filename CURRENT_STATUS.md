@@ -1,9 +1,9 @@
 # AwareMate - Current Status
 
-**Last Updated:** 2026-09-02T21:25:00+03:00  
+**Last Updated:** 2026-09-03T02:08:00+03:00  
 **Repository Path:** `c:\Users\husoelrey\Documents\Projects\AwareMate`  
 **Branch:** `main`  
-**Current Phase:** P5 Completed (100% Verified) -> Transitioning to P6
+**Current Phase:** P6 Completed (100% Verified) -> Transitioning to P7 (Polish & Release Readiness)
 
 ---
 
@@ -22,24 +22,23 @@
 - **Koin DI:** 4.0.0 (KMP shared + Android modules + Voyager ScreenModels)
 - **Charts:** Vico 2.0.3 (`vico-compose`, `vico-compose-m3`) with native Cartesian charts & multiplatform Compose Canvas fallback
 - **Firebase BOM:** 33.9.0 (Auth & Firestore client integration)
-- **Build Verification:** `./gradlew.bat test assembleDebug` executed with `BUILD SUCCESSFUL` (110 actionable tasks, 0 errors, 100% test pass rate across all ScreenModel MVI, domain use cases, and Robolectric Compose UI tests).
+- **Build Verification:** `./gradlew.bat test assembleDebug` executed with `BUILD SUCCESSFUL` (142 actionable tasks, 0 errors, 100% test pass rate across Room DAOs, MVI ScreenModels, domain use cases, and Robolectric Compose UI tests).
 
 ---
 
-## 2. Phase 5 Deliverables Completed
+## 2. Phase 6 Deliverables Completed
 
 | Deliverable | Location | Status | Notes |
 |---|---|---|---|
-| **Android UsageStats API & Permission Bridge** | `Platform.kt`, `Platform.android.kt`, `AndroidManifest.xml` | **COMPLETED** | `hasUsageStatsPermission(context)` via `AppOpsManager.checkOpNoThrow(OPSTR_GET_USAGE_STATS)` and `openUsageAccessSettings(context)` directing users to Android Special Access settings. |
-| **On-Device Usage Repository & Room Persistence** | `UsageStatsRepository.kt`, `AndroidUsageStatsRepository.kt`, `ScreenTimeSnapshotEntity.kt`, `ScreenTimeDao.kt` | **COMPLETED** | 100% on-device app usage aggregation, package name labeling, hourly rhythm estimation, and offline caching via Room `screen_time_snapshots`. |
-| **Vico Charts Screen Time Analytics** | `ScreenTimeBarChart.kt`, `ScreenTimeBarChart.android.kt`, `ScreenTimeBarChart.ios.kt` | **COMPLETED** | Expect/actual charting architecture. Android implementation uses Vico 2.0.3 `CartesianChartHost` with column layer and M3 organic colors. iOS/fallback uses custom Canvas bar chart. |
-| **Screen Time Analytics Screen** | `ScreenTimeAnalyticsScreen.kt` | **COMPLETED** | Daily screen time overview, progress vs intention, permission guidance card with settings launcher, Vico 7-day bar chart, and top app breakdown. |
-| **Non-Punitive Mindful Nudge Notification System** | `MindfulNudgeRules.kt`, `NotificationService.kt`, `AndroidNotificationService.kt` | **COMPLETED** | Rule engine with continuous usage (30/45/60m) and daily goal triggers, 30m cooldown, focus session muting. Strict anti-guilt message catalog following AGENTS.md Section 4. |
-| **Companion-Animated Focus Session Timer** | `FocusState.kt`, `FocusScreenModel.kt`, `FocusScreen.kt` | **COMPLETED** | Complete MVI focus timer (15, 25, 45, 60m), category selector, live animated `CompanionCanvas` (meditation breathing halo during `RUNNING`, `CURIOUS` during `PAUSED`, `CHEERFUL` with sparkles on completion), Wisdom/Energy XP awards, momentum boost, and Room persistence. |
-| **Digital Sunset Reminder System** | `DigitalSunsetUseCase.kt`, `DigitalSunsetBanner.kt` | **COMPLETED** | Sunset window calculation (45m prior to bedtime), approaching/active/bedtime stages, twilight wind-down banner on Home dashboard, anti-shame sleep prompts. |
-| **Weekly Digital Awareness Report** | `GetWeeklyAwarenessReportUseCase.kt`, `WeeklyReportScreen.kt` | **COMPLETED** | 7-day metric aggregation, daily average calculation, focus minutes and sessions count, awareness score average, top 5 spaces, and compassionate reflection insight. |
-| **P5 Unit & Dependency Graph Tests** | `commonTest/...` & `androidUnitTest/...` | **COMPLETED** | `UsageStatsRepositoryTest`, `MindfulNudgeRulesTest`, `DigitalSunsetUseCaseTest`, `GetWeeklyAwarenessReportUseCaseTest`, `FocusScreenModelTest`, `KoinDependencyGraphTest`. |
-| **Architectural Decision Records** | `DECISION_LOG.md` | **COMPLETED** | Added D-026 (Android UsageStats API On-Device Aggregation & Permission Bridge), D-027 (Vico Multiplatform Chart Architecture), D-028 (Non-Punitive Mindful Nudge & Digital Sunset Architecture). |
+| **Mood Journal Subsystem** | `MoodCheckInDialog.kt`, `LogMoodUseCase.kt`, `MoodRepositoryImpl.kt` | **COMPLETED** | 5-level non-stigmatizing emoji picker (`😄`, `😊`, `🌿`, `🥱`, `🌧️`), energy battery slider (1-5), optional reflection notes, and contextual tags. Persists to Room `mood_entries`, syncs to Firestore, awards +15 Wisdom XP, boosts momentum, and transitions companion emotion to `PEACEFUL`. |
+| **Animated Radial Breathing Guide** | `BreathingGuideDialog.kt`, `BreathingModels.kt`, `GrowthScreenModel.kt` | **COMPLETED** | Pure Compose Canvas visualizer with multi-ring glowing halo, scale animations matching breath phase (`FastOutSlowInEasing`), pacing countdown, and cycle tracker. Supports Box Breathing (4-4-4-4), 4-7-8 Deep Calm, and Grounding Reset (4-6). Awards +20 Energy XP on completion. |
+| **Offline Hobby Discovery Catalog & Recommendations** | `Hobby.kt`, `HobbyCatalog.kt`, `HobbyEntity.kt`, `HobbyDao.kt`, `HobbyRepositoryImpl.kt`, `GetPersonalizedHobbiesUseCase.kt`, `HobbyDiscoverySection.kt` | **COMPLETED** | 15+ curated screen-free offline hobbies across 5 categories (`CREATIVE_ARTS`, `NATURE_OUTDOORS`, `MINDFUL_LIFESTYLE`, `HANDS_ON_CRAFT`, `MUSIC_LITERATURE`). Tailored recommendations by user energy level. Bookmarking and session completion tracking (+25 Creativity XP). |
+| **Daily Micro-Challenges Integration** | `ChallengeCatalog.kt`, `GrowthScreen.kt`, `DailySparksCard.kt` | **COMPLETED** | Enriched catalog with 16 diverse youth-friendly micro-challenges across Happiness, Energy, Wisdom, and Creativity. Completion awards XP and boosts momentum. |
+| **Curiosity-Driven Self-Discovery Prompts** | `SelfDiscoveryPrompt.kt`, `SelfDiscoveryCatalog.kt`, `SelfDiscoveryPromptEntity.kt`, `SelfDiscoveryPromptDao.kt`, `SelfDiscoveryRepositoryImpl.kt`, `SelfDiscoveryCard.kt` | **COMPLETED** | 8 starter curiosity-driven prompts noticing subtle reflexes (pocket reflex, waiting spaces, thumb autopilot, soundscape, mealtime presence). Strictly zero fabricated/unsourced statistics, zero comparison framing. Observation acknowledgment awards +15 Wisdom XP. |
+| **Weekly Mood & Growth Insights** | `WeeklyMoodInsights.kt`, `GetWeeklyMoodInsightsUseCase.kt`, `WeeklyMoodInsightsCard.kt` | **COMPLETED** | 7-day emotional climate rhythm bar, average mood and energy battery scores, dominant emoji summary, and compassionate, non-punitive narrative takeaways. |
+| **Growth MVI Architecture & Screen** | `GrowthState.kt`, `GrowthIntent.kt`, `GrowthScreenModel.kt`, `GrowthScreen.kt` | **COMPLETED** | Full MVI implementation with Voyager ScreenModel, Koin injection, reactive Flow state, dialog controls, and accessible UI. |
+| **P6 Test Suite** | `HobbyDaoTest.kt`, `LogMoodUseCaseTest.kt`, `GetPersonalizedHobbiesUseCaseTest.kt`, `GetWeeklyMoodInsightsUseCaseTest.kt`, `GrowthScreenModelTest.kt`, `ComposeUiAccessibilityTest.kt`, `KoinDependencyGraphTest.kt` | **COMPLETED** | 100% test coverage across Room DAOs, domain use cases, ScreenModel state transitions, accessibility semantics, and DI graph validation. |
+| **Architectural Decision Records** | `DECISION_LOG.md` | **COMPLETED** | Added D-029 (Room KMP Persistence for Hobbies & Prompts), D-030 (Compose Canvas Radial Breathing Engine), D-031 (Compassionate Mood Journaling & Anti-Shame Weekly Insights). |
 
 ---
 
@@ -53,22 +52,18 @@
 | **P3** | Companion system and gamification engine (Momentum, XP, growth stages) | **COMPLETED (100% Verified)** |
 | **P4** | UI foundation and navigation (Voyager, Design System, Onboarding) | **COMPLETED (100% Verified)** |
 | **P5** | Digital awareness module (UsageStats, Vico charts, Nudges, Sunset) | **COMPLETED (100% Verified)** |
-| **P6** | Personal growth module (Mood journal, Breath exercises, Micro-challenges) | **NEXT UP** |
-| **P7** | Polish and release readiness (Accessibility, Offline sync, Crashlytics, Store listing) | Pending |
+| **P6** | Personal growth module (Mood journal, Breath exercises, Hobbies, Self-Discovery, Insights) | **COMPLETED (100% Verified)** |
+| **P7** | Polish and release readiness (Accessibility, Offline sync, Crashlytics, Store listing) | **NEXT UP** |
 
 ---
 
-## 4. Next Safe Task (P6) Instructions for Next Session
-When beginning Phase 6, execute the following bounded tasks:
-1. **Mood Journal Subsystem**:
-   - Implement emoji mood picker with intensity slider and optional reflection notes.
-   - Store entries in Room `mood_entries` table with background Firestore synchronization.
-2. **Breath & Ground Exercises**:
-   - Build animated breathing guide (4-7-8, Box Breathing) using Compose Canvas with soothing radial expansions and tactile haptic cues.
-3. **Offline Hobby Discovery Catalog**:
-   - Seed offline hobby database (creative, outdoor, reading, mindful crafts).
-   - Allow youth to bookmark and track real-world hobbies with companion XP rewards.
-4. **Daily Micro-Challenges & Self-Discovery Prompts**:
-   - Expand `ChallengeCatalog` with curiosity-based, non-comparative self-discovery prompts (as defined in PLAN.md P6).
-5. **Personal Growth Tests**:
-   - Write unit tests for mood analytics, breath pacing state machines, and micro-challenge completion flows.
+## 4. Next Safe Task (P7) Instructions for Next Session
+When beginning Phase 7, execute the following bounded tasks:
+1. **Offline-First Synchronization & Error Handling**:
+   - Verify network connectivity listeners and automatic queue flushing for Room-to-Firestore syncing.
+2. **Accessibility & Contrast Polish**:
+   - Complete TalkBack navigation audit, ensuring minimum 48dp touch targets and WCAG 2.1 AA color contrast.
+3. **App Assets & Store Listing Readiness**:
+   - Verify app icon, splash screen, and minimal privacy policy document for Play Store compliance.
+4. **Firebase Crashlytics & Analytics Integration**:
+   - Wire up crash reporting and privacy-respecting basic analytics events.
