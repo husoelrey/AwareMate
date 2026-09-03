@@ -106,6 +106,12 @@ android {
             isIncludeAndroidResources = true
         }
     }
+
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = false
+        disable += setOf("MissingPermission", "ObsoleteSdkInt")
+    }
 }
 
 room {

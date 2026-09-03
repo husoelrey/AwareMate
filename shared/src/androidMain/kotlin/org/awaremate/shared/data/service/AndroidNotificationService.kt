@@ -43,6 +43,7 @@ class AndroidNotificationService(
         }
     }
 
+    @android.annotation.SuppressLint("MissingPermission")
     override fun showNudgeNotification(nudge: NudgeMessage): Result<Unit> = runCatching {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val permission = ContextCompat.checkSelfPermission(

@@ -1,11 +1,13 @@
 package org.awaremate.shared.util
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.awaremate.shared.AppContextProvider
 
 class AndroidAnalyticsService : AnalyticsService {
 
+    @SuppressLint("MissingPermission")
     override fun logEvent(eventName: String, params: Map<String, String>) {
         try {
             val context = AppContextProvider.appContext ?: return

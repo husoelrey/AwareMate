@@ -1,5 +1,6 @@
 package org.awaremate.shared.data.remote
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+@SuppressLint("MissingPermission")
 class AndroidConnectivityObserver(
     context: Context
 ) : ConnectivityObserver {
