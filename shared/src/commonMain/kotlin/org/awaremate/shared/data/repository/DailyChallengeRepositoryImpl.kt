@@ -22,9 +22,14 @@ class DailyChallengeRepositoryImpl(
     override suspend fun saveChallenges(challenges: List<DailyChallenge>): Result<Unit> = runCatching {
         val entities = challenges.map { DailyChallengeEntity.fromDomain(it) }
         dailyChallengeDao.insertChallenges(entities)
-        challenges.forEach { challenge ->
-            cloudSyncService?.backupDailyChallenge(challenge)
+        runCatching {
+            kotlinx.coroutines.withTimeoutOrNull(1000L) {
+                challenges.forEach { challenge ->
+                    cloudSyncService?.backupDailyChallenge(challenge)
+                }
+            }
         }
+        Unit
     }
 
     override suspend fun completeChallenge(id: String): Result<Unit> = runCatching {

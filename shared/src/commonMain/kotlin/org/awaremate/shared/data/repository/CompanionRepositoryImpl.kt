@@ -25,7 +25,12 @@ class CompanionRepositoryImpl(
 
     override suspend fun saveCompanion(companion: Companion): Result<Unit> = runCatching {
         companionDao.insertCompanion(CompanionEntity.fromDomain(companion))
-        cloudSyncService?.backupCompanion(companion)
+        runCatching {
+            kotlinx.coroutines.withTimeoutOrNull(1000L) {
+                cloudSyncService?.backupCompanion(companion)
+            }
+        }
+        Unit
     }
 
     override suspend fun addExperience(category: CompanionCategory, amount: Int): Result<Companion> = runCatching {
@@ -52,7 +57,11 @@ class CompanionRepositoryImpl(
         )
 
         companionDao.insertCompanion(CompanionEntity.fromDomain(updatedCompanion))
-        cloudSyncService?.backupCompanion(updatedCompanion)
+        runCatching {
+            kotlinx.coroutines.withTimeoutOrNull(1000L) {
+                cloudSyncService?.backupCompanion(updatedCompanion)
+            }
+        }
         updatedCompanion
     }
 
@@ -62,6 +71,11 @@ class CompanionRepositoryImpl(
         val now = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
         val updated = current.copy(momentumScore = clampedScore, lastUpdatedEpochMs = now)
         companionDao.insertCompanion(CompanionEntity.fromDomain(updated))
-        cloudSyncService?.backupCompanion(updated)
+        runCatching {
+            kotlinx.coroutines.withTimeoutOrNull(1000L) {
+                cloudSyncService?.backupCompanion(updated)
+            }
+        }
+        Unit
     }
 }

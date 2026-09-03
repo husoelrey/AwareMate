@@ -46,6 +46,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
+import org.awaremate.shared.hasUsageStatsPermission
 import org.awaremate.shared.openBrowserUrl
 import org.awaremate.shared.openUsageAccessSettings
 import org.awaremate.shared.presentation.profile.ProfileScreen
@@ -59,6 +65,17 @@ class SettingsScreen : Screen {
         val state by screenModel.state.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
         var showPrivacyDialog by remember { mutableStateOf(false) }
+        var hasUsageAccess by remember { mutableStateOf(hasUsageStatsPermission()) }
+
+        LaunchedEffect(Unit) {
+            while (true) {
+                val granted = hasUsageStatsPermission()
+                if (granted != hasUsageAccess) {
+                    hasUsageAccess = granted
+                }
+                delay(800)
+            }
+        }
 
         Scaffold(
             topBar = {
@@ -294,27 +311,66 @@ class SettingsScreen : Screen {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                text = "📱 Usage Access (UsageStats)",
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "📱 Usage Access (UsageStats)",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+
+                                if (hasUsageAccess) {
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(Color(0xFF2E7D32))
+                                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                                    ) {
+                                        Text(
+                                            text = "✓ Granted",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+                                    }
+                                }
+                            }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "Required to calculate screen time and mindful nudge triggers locally. Opens Android system settings.",
+                                text = if (hasUsageAccess) {
+                                    "Usage access is active! Screen time is calculated 100% locally on your device."
+                                } else {
+                                    "Required to calculate screen time and mindful nudge triggers locally. Opens Android system settings."
+                                },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.height(10.dp))
-                            Button(
-                                onClick = { openUsageAccessSettings() },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .semantics {
-                                        contentDescription = "Open Android Settings for Usage Access"
-                                    }
-                            ) {
-                                Text("Open Usage Access Settings")
+                            if (hasUsageAccess) {
+                                OutlinedButton(
+                                    onClick = { openUsageAccessSettings() },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .semantics {
+                                            contentDescription = "Usage access already granted. Tap to review in Android Settings."
+                                        }
+                                ) {
+                                    Text("✓ Usage Access Granted (Manage)", color = Color(0xFF2E7D32), fontWeight = FontWeight.SemiBold)
+                                }
+                            } else {
+                                Button(
+                                    onClick = { openUsageAccessSettings() },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .semantics {
+                                            contentDescription = "Open Android Settings for Usage Access"
+                                        }
+                                ) {
+                                    Text("Open Usage Access Settings")
+                                }
                             }
 
                             Spacer(modifier = Modifier.height(16.dp))

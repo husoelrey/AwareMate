@@ -42,9 +42,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +59,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import kotlinx.coroutines.delay
+import org.awaremate.shared.hasUsageStatsPermission
 import org.awaremate.shared.openUsageAccessSettings
 import org.awaremate.shared.presentation.main.MainScreen
 
@@ -147,7 +153,8 @@ class OnboardingScreen : Screen {
                                 onBedtimeChange = { h, m -> screenModel.handleIntent(OnboardingIntent.SetBedtime(h, m)) },
                                 onBack = { screenModel.handleIntent(OnboardingIntent.PreviousStep) },
                                 onFinish = { screenModel.handleIntent(OnboardingIntent.FinishOnboarding) },
-                                isLoading = state.isLoading
+                                isLoading = state.isLoading,
+                                errorMessage = state.errorMessage
                             )
                         }
                     }
@@ -480,6 +487,19 @@ private fun PermissionsStep(
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
+    var hasUsageAccess by remember { mutableStateOf(hasUsageStatsPermission()) }
+
+    // Live polling when returning from Android Settings
+    LaunchedEffect(Unit) {
+        while (true) {
+            val granted = hasUsageStatsPermission()
+            if (granted != hasUsageAccess) {
+                hasUsageAccess = granted
+            }
+            delay(600)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -504,85 +524,159 @@ private fun PermissionsStep(
 
             // Usage Access Guidance Card (Explicitly detailed per requirements)
             Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (hasUsageAccess) {
+                        Color(0xFFE8F5E9).copy(alpha = 0.6f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+                    }
+                ),
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = "📊", fontSize = 24.sp)
-                        Spacer(modifier = Modifier.width(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = "📊", fontSize = 24.sp)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "App Usage Access",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+
+                        if (hasUsageAccess) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Color(0xFF2E7D32))
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "✓ Granted",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    if (hasUsageAccess) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(Color(0xFFC8E6C9).copy(alpha = 0.6f))
+                                .padding(12.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(text = "🌿", fontSize = 22.sp)
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column {
+                                    Text(
+                                        text = "Usage Access Active!",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF1B5E20)
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = "AwareMate is ready to calculate your daily screen time and deliver mindful nudges 100% locally.",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color(0xFF2E7D32)
+                                    )
+                                }
+                            }
+                        }
+                    } else {
                         Text(
-                            text = "App Usage Access (UsageStats)",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
+                            text = "To track daily screen time and deliver mindful nudges, Android requires special 'Usage Access'.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // Privacy Assurance Pill
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f))
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = "🔒 100% Private & Local: Your app usage data stays strictly on your device. We never sell, track, or upload your data to any servers.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // Step by step instruction banner
+                        Text(
+                            text = "How to enable in Android Settings:",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "To track daily screen time and deliver mindful nudges, Android requires special 'Usage Access'.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Privacy Assurance Pill
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f))
-                            .padding(8.dp)
-                    ) {
+                        Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "🔒 100% Private & Local: Your app usage data stays strictly on your device. We never sell, track, or upload your data to any servers.",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            text = "1. Tap 'Open Usage Settings' below.\n2. Find 'AwareMate' in the list.\n3. Turn 'Permit usage access' ON, then return here.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Step by step instruction banner
-                    Text(
-                        text = "How to enable in Android Settings:",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "1. Tap 'Open Usage Settings' below.\n2. Find 'AwareMate' in the list.\n3. Turn 'Permit usage access' ON, then return here.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    if (hasUsageAccess) {
+                        OutlinedButton(
+                            onClick = onOpenUsageSettings,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics {
+                                    contentDescription = "Usage access granted. Tap to review in Android Settings"
+                                }
+                        ) {
+                            Text(
+                                text = "✓ Usage Access Granted (Manage in Settings)",
+                                color = Color(0xFF2E7D32),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    } else {
+                        Button(
+                            onClick = onOpenUsageSettings,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics {
+                                    contentDescription = "Open Android Settings for Usage Access"
+                                }
+                        ) {
+                            Text(text = "Open Usage Settings")
+                        }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
 
-                    Button(
-                        onClick = onOpenUsageSettings,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .semantics {
-                                contentDescription = "Open Android Settings for Usage Access"
-                            }
-                    ) {
-                        Text(text = "Open Usage Settings")
+                        Text(
+                            text = "(Optional for now — you can always grant this later in Settings)",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = "(Optional for now — you can always grant this later in Settings)",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
                 }
             }
 
@@ -652,7 +746,7 @@ private fun PermissionsStep(
                     .weight(1f)
                     .semantics { contentDescription = "Continue to daily intentions" }
             ) {
-                Text(text = "Continue")
+                Text(text = if (hasUsageAccess) "Continue →" else "Continue")
             }
         }
     }
@@ -669,7 +763,8 @@ private fun IntentionsStep(
     onBedtimeChange: (Int, Int) -> Unit,
     onBack: () -> Unit,
     onFinish: () -> Unit,
-    isLoading: Boolean
+    isLoading: Boolean,
+    errorMessage: String? = null
 ) {
     Column(
         modifier = Modifier
@@ -803,6 +898,23 @@ private fun IntentionsStep(
                             )
                         }
                     }
+                }
+            }
+
+            if (errorMessage != null) {
+                Spacer(modifier = Modifier.height(14.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.errorContainer)
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = "⚠️ $errorMessage",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
                 }
             }
         }

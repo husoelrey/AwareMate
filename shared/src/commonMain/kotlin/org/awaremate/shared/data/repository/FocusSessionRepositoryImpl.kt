@@ -21,12 +21,18 @@ class FocusSessionRepositoryImpl(
 
     override suspend fun saveSession(session: FocusSession): Result<Unit> = runCatching {
         focusSessionDao.insertSession(FocusSessionEntity.fromDomain(session.copy(isSynced = false)))
-        if (cloudSyncService != null) {
-            val syncResult = cloudSyncService.backupFocusSession(session)
-            if (syncResult.isSuccess) {
+        val syncService = cloudSyncService
+        if (syncService != null) {
+            val syncResult = runCatching {
+                kotlinx.coroutines.withTimeoutOrNull(1000L) {
+                    syncService.backupFocusSession(session)
+                }
+            }.getOrNull()
+            if (syncResult?.isSuccess == true) {
                 focusSessionDao.markAsSynced(session.id, true)
             }
         }
+        Unit
     }
 
     override suspend fun getTotalFocusMinutes(): Long {

@@ -19,7 +19,12 @@ class UserRepositoryImpl(
 
     override suspend fun saveUser(user: User): Result<Unit> = runCatching {
         userDao.insertUser(UserEntity.fromDomain(user))
-        cloudSyncService?.backupUser(user)
+        runCatching {
+            kotlinx.coroutines.withTimeoutOrNull(1000L) {
+                cloudSyncService?.backupUser(user)
+            }
+        }
+        Unit
     }
 
     override suspend fun getUser(id: String): User? {
