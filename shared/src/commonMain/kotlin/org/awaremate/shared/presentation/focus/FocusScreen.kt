@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -116,45 +117,49 @@ class FocusScreen : Screen {
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
 
-                    // Category selector row
+                    // Category selector row with horizontal scroll to prevent text squeezing
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
                     ) {
                         listOf(
-                            FocusCategory.DEEP_WORK to "⚡ Deep Work",
-                            FocusCategory.STUDY to "📚 Study",
-                            FocusCategory.MINDFULNESS to "🧘 Breathe",
-                            FocusCategory.OFFLINE_HOBBY to "🎨 Offline"
+                            FocusCategory.DEEP_WORK to "Deep Work",
+                            FocusCategory.STUDY to "Study",
+                            FocusCategory.MINDFULNESS to "Breathing",
+                            FocusCategory.OFFLINE_HOBBY to "Offline Hobby"
                         ).forEach { (cat, label) ->
                             FilterChip(
                                 selected = state.selectedCategory == cat,
                                 onClick = { screenModel.handleIntent(FocusIntent.SelectCategory(cat)) },
                                 label = { Text(label, fontSize = 12.sp) },
-                                modifier = Modifier
-                                    .padding(horizontal = 3.dp)
-                                    .semantics {
-                                        contentDescription = "$label focus category"
-                                    }
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                ),
+                                modifier = Modifier.semantics {
+                                    contentDescription = "$label focus category"
+                                }
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
                 // Animated Circular Timer with Companion Canvas
                 FocusTimerVisual(
                     state = state,
-                    modifier = Modifier.padding(vertical = 12.dp)
+                    modifier = Modifier.padding(vertical = 4.dp)
                 )
 
                 // Large digital countdown
                 Text(
                     text = state.formattedRemainingTime,
-                    style = MaterialTheme.typography.displayMedium,
+                    style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.semantics {
@@ -171,7 +176,7 @@ class FocusScreen : Screen {
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
+                    modifier = Modifier.padding(top = 2.dp, bottom = 14.dp)
                 )
 
                 // Timer Controls
@@ -182,12 +187,12 @@ class FocusScreen : Screen {
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(52.dp)
+                                .height(48.dp)
                                 .semantics {
                                     contentDescription = "Start ${state.selectedDurationMinutes} minute mindful focus session"
                                 }
                         ) {
-                            Text("Begin Focus (${state.selectedDurationMinutes} min)", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                            Text("Begin Focus (${state.selectedDurationMinutes} min)", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
 
@@ -381,7 +386,7 @@ fun FocusTimerVisual(
 
     Box(
         modifier = modifier
-            .size(240.dp)
+            .size(175.dp)
             .semantics {
                 contentDescription = "Animated focus session timer with companion. Progress ${(progress * 100).toInt()}%"
             },
@@ -389,7 +394,7 @@ fun FocusTimerVisual(
     ) {
         // Circular progress timer ring
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val strokeWidth = 10.dp.toPx()
+            val strokeWidth = 8.dp.toPx()
             val diameter = size.minDimension - strokeWidth
 
             // Background track
@@ -418,14 +423,14 @@ fun FocusTimerVisual(
         // Companion Canvas with meditation breathing
         Box(
             modifier = Modifier
-                .size(150.dp)
+                .size(115.dp)
                 .clip(CircleShape),
             contentAlignment = Alignment.Center
         ) {
             CompanionCanvas(
                 stage = state.companionStage,
                 emotion = state.companionEmotion,
-                modifier = Modifier.size(140.dp)
+                modifier = Modifier.size(105.dp)
             )
         }
     }

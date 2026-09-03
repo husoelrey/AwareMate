@@ -30,7 +30,7 @@ class GetPersonalizedHobbiesUseCase {
                 compareByDescending<Hobby> { it.isBookmarked }
                     .thenByDescending { preferredCategory != null && it.category == preferredCategory }
                     .thenByDescending { matchingEnergy != null && it.energyLevel == matchingEnergy }
-                    .thenBy { it.sessionsCompleted }
+                    .thenBy { it.id }
             )
             .take(limit)
     }

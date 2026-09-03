@@ -540,16 +540,12 @@ private fun PermissionsStep(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = "📊", fontSize = 24.sp)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "App Usage Access",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                        Text(
+                            text = "App Usage Access",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
 
                         if (hasUsageAccess) {
                             Box(
@@ -559,7 +555,7 @@ private fun PermissionsStep(
                                     .padding(horizontal = 10.dp, vertical = 4.dp)
                             ) {
                                 Text(
-                                    text = "✓ Granted",
+                                    text = "Granted",
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -575,49 +571,44 @@ private fun PermissionsStep(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(10.dp))
-                                .background(Color(0xFFC8E6C9).copy(alpha = 0.6f))
+                                .background(Color(0xFFC8E6C9).copy(alpha = 0.5f))
                                 .padding(12.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(text = "🌿", fontSize = 22.sp)
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Column {
-                                    Text(
-                                        text = "Usage Access Active!",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF1B5E20)
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = "AwareMate is ready to calculate your daily screen time and deliver mindful nudges 100% locally.",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = Color(0xFF2E7D32)
-                                    )
-                                }
+                            Column {
+                                Text(
+                                    text = "Usage access enabled",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFF1B5E20)
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "AwareMate can now observe your daily screen time and provide gentle focus nudges.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color(0xFF2E7D32)
+                                )
                             }
                         }
                     } else {
                         Text(
-                            text = "To track daily screen time and deliver mindful nudges, Android requires special 'Usage Access'.",
+                            text = "To observe daily screen time and deliver gentle nudges, Android requires Usage Access.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Privacy Assurance Pill
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f))
+                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                                 .padding(8.dp)
                         ) {
                             Text(
-                                text = "🔒 100% Private & Local: Your app usage data stays strictly on your device. We never sell, track, or upload your data to any servers.",
+                                text = "Your usage habits remain on your device and are never sold or shared.",
                                 style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
@@ -625,14 +616,14 @@ private fun PermissionsStep(
 
                         // Step by step instruction banner
                         Text(
-                            text = "How to enable in Android Settings:",
+                            text = "How to enable:",
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "1. Tap 'Open Usage Settings' below.\n2. Find 'AwareMate' in the list.\n3. Turn 'Permit usage access' ON, then return here.",
+                            text = "1. Tap 'Open Settings' below.\n2. Find 'AwareMate' in the list.\n3. Turn 'Permit usage access' on, then return here.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -650,7 +641,7 @@ private fun PermissionsStep(
                                 }
                         ) {
                             Text(
-                                text = "✓ Usage Access Granted (Manage in Settings)",
+                                text = "Manage in Settings",
                                 color = Color(0xFF2E7D32),
                                 fontWeight = FontWeight.SemiBold
                             )

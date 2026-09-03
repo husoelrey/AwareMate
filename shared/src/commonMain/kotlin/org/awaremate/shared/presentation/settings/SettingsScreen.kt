@@ -303,7 +303,7 @@ class SettingsScreen : Screen {
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // 3. Android System Permissions
-                    SettingsSectionTitle("Android Permissions & Access")
+                    SettingsSectionTitle("Permissions")
 
                     Card(
                         shape = RoundedCornerShape(16.dp),
@@ -317,7 +317,7 @@ class SettingsScreen : Screen {
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "📱 Usage Access (UsageStats)",
+                                    text = "Usage Access",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -330,7 +330,7 @@ class SettingsScreen : Screen {
                                             .padding(horizontal = 8.dp, vertical = 3.dp)
                                     ) {
                                         Text(
-                                            text = "✓ Granted",
+                                            text = "Granted",
                                             style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
                                             color = Color.White
@@ -341,9 +341,9 @@ class SettingsScreen : Screen {
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = if (hasUsageAccess) {
-                                    "Usage access is active! Screen time is calculated 100% locally on your device."
+                                    "Usage access is active. Screen time and habits are observed on this device."
                                 } else {
-                                    "Required to calculate screen time and mindful nudge triggers locally. Opens Android system settings."
+                                    "Allows AwareMate to observe screen time and provide mindful nudges."
                                 },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -358,7 +358,7 @@ class SettingsScreen : Screen {
                                             contentDescription = "Usage access already granted. Tap to review in Android Settings."
                                         }
                                 ) {
-                                    Text("✓ Usage Access Granted (Manage)", color = Color(0xFF2E7D32), fontWeight = FontWeight.SemiBold)
+                                    Text("Manage in Settings", color = Color(0xFF2E7D32), fontWeight = FontWeight.SemiBold)
                                 }
                             } else {
                                 Button(
@@ -369,7 +369,7 @@ class SettingsScreen : Screen {
                                             contentDescription = "Open Android Settings for Usage Access"
                                         }
                                 ) {
-                                    Text("Open Usage Access Settings")
+                                    Text("Grant Usage Access")
                                 }
                             }
 
@@ -405,26 +405,25 @@ class SettingsScreen : Screen {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // 4. Data & Privacy (Local-First Guarantee)
-                    SettingsSectionTitle("Data & Privacy")
+                    // 4. Privacy & Data
+                    SettingsSectionTitle("Privacy & Data")
 
                     Card(
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "🔒 Local-First Single Source of Truth",
+                                text = "Your Data Stays on Your Device",
                                 style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                                fontWeight = FontWeight.SemiBold
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
-                                text = "All your companion progress, screen time metrics, and mood reflections are saved locally in Room database on your device. We never sell, advertise, or track your personal information.",
+                                text = "Your companion progress, screen time metrics, and mood reflections are stored locally on your device. We never sell, advertise, or track your personal information.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             OutlinedButton(
@@ -436,33 +435,32 @@ class SettingsScreen : Screen {
                                         contentDescription = "Read full AwareMate Privacy Policy"
                                     }
                             ) {
-                                Text("View Privacy Policy 📜")
+                                Text("Privacy Policy")
                             }
                         }
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // 5. Support AwareMate (Sustainability & Voluntary Sponsorship)
-                    SettingsSectionTitle("Support AwareMate 🌿")
+                    // 5. About & Sustainability
+                    SettingsSectionTitle("About & Sustainability")
 
                     Card(
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.35f)),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
                                 text = "100% Free & Open Source",
                                 style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer
+                                fontWeight = FontWeight.SemiBold
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "AwareMate has no ads, no paywalls, and no data tracking. We are sustained by community love and optional donations to cover hosting and Firebase infrastructure costs.",
+                                text = "AwareMate has no ads, no subscriptions, and no data tracking. It is licensed under Apache 2.0 and sustained by voluntary donations.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.85f)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.height(14.dp))
                             Row(
