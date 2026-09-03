@@ -13,29 +13,32 @@ import cafe.adriel.voyager.transitions.FadeTransition
 import org.awaremate.shared.domain.repository.PreferencesRepository
 import org.awaremate.shared.presentation.navigation.RootScreen
 import org.awaremate.shared.presentation.theme.AwareMateTheme
+import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 
 @Composable
 fun App() {
-    val preferencesRepository: PreferencesRepository = koinInject()
-    val prefs by preferencesRepository.getPreferences().collectAsState(initial = null)
+    KoinContext {
+        val preferencesRepository: PreferencesRepository = koinInject()
+        val prefs by preferencesRepository.getPreferences().collectAsState(initial = null)
 
-    val themeMode = prefs?.themeMode ?: "SYSTEM"
-    val dynamicColor = prefs?.dynamicColorEnabled ?: true
+        val themeMode = prefs?.themeMode ?: "SYSTEM"
+        val dynamicColor = prefs?.dynamicColorEnabled ?: true
 
-    AwareMateTheme(
-        themeMode = themeMode,
-        dynamicColor = dynamicColor
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .semantics {
-                    contentDescription = "AwareMate Application Root Surface"
-                }
+        AwareMateTheme(
+            themeMode = themeMode,
+            dynamicColor = dynamicColor
         ) {
-            Navigator(RootScreen()) { navigator ->
-                FadeTransition(navigator)
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .semantics {
+                        contentDescription = "AwareMate Application Root Surface"
+                    }
+            ) {
+                Navigator(RootScreen()) { navigator ->
+                    FadeTransition(navigator)
+                }
             }
         }
     }
