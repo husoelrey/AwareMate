@@ -1,9 +1,9 @@
 [versions]
 # Core Build & Language
-kotlin = "2.1.20"
+kotlin = "2.2.10"
 compose-multiplatform = "1.7.3"
-agp = "8.8.0"
-ksp = "2.1.20-2.0.1"
+agp = "9.3.2"
+ksp = "2.3.6"
 
 # KotlinX Libraries
 kotlinx-coroutines = "1.10.1"
@@ -18,7 +18,7 @@ androidx-lifecycle = "2.8.4"
 # Architecture & Storage
 koin = "4.0.0"
 voyager = "1.1.0-beta03"
-room = "2.7.0"
+room = "2.7.2"
 sqlite = "2.5.0"
 datastore = "1.1.2"
 
@@ -30,6 +30,7 @@ vico = "2.0.3"
 # Firebase (Android & KMP)
 google-services = "4.4.2"
 firebase-bom = "33.9.0"
+firebase-crashlytics-plugin = "3.0.3"
 
 # Testing
 junit = "4.13.2"
@@ -119,3 +120,4 @@ compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-m
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
