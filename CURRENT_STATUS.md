@@ -98,7 +98,7 @@ Verification commands/results:
 ---
 
 ## 4. MVP Release Status
-AwareMate is now in an **MVP Ready state for Closed/Internal Testing**. All code, tests, and configurations are complete. GitHub Release `v1.0.0` is published with `AwareMate-v1.0.0.apk` at `https://github.com/husoelrey/AwareMate/releases/tag/v1.0.0`.
+AwareMate is now in an **MVP Ready state for Closed/Internal Testing**. All code, tests, and configurations are complete. GitHub Release `v1.0.0` is published with `androidApp-release.apk` at `https://github.com/husoelrey/AwareMate/releases/tag/v1.0.0`.
 Manual operational steps remaining for the maintainer:
 1. Generate production keystore `.jks` for Play Console release signing (or let Google Play manage app signing).
 2. Create app entry on Google Play Console and upload `androidApp-release.aab`.
