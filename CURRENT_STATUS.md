@@ -1,9 +1,9 @@
 # AwareMate - Current Status
 
-**Last Updated:** 2026-09-03T20:12:00+03:00  
+**Last Updated:** 2026-09-04T16:01:10+03:00
 **Repository Path:** `c:\Users\husoelrey\Documents\Projects\AwareMate`  
-**Branch:** `main` (Latest commit: `8a4a0f8`)  
-**Current Phase:** P7 Completed (100% Verified) — **UI/UX Polished, Native Icons, Zero Clutter**
+**Branch:** `codex/p7-extended-polish`
+**Current Phase:** P7 Extended Scope Completed (100% Verified) — **Compassionate Insights, Gentle Re-engagement, Data Control, Private Sharing**
 
 ---
 
@@ -18,13 +18,17 @@
 - **Min SDK:** API 26 (Android 8.0 Oreo)
 - **Room KMP:** 2.7.2 with SQLite Bundled Driver (2.5.0) & KSP (2.3.6)
 - **DataStore:** 1.1.2 (Multiplatform Preferences)
+- **WorkManager:** 2.11.2 (unique local-time missed-check-in work)
+- **Jetpack Glance:** 1.2.0 (Android companion check-in widget)
 - **Navigation:** Voyager 1.1.0-beta03
 - **Koin DI:** 4.0.0 (KMP shared + Android modules + Voyager ScreenModels)
 - **Firebase BOM:** 33.9.0 (Auth, Firestore, Messaging, Analytics, Crashlytics with applied Gradle plugin)
 - **Build Verification:**
-  - `./gradlew.bat test` — `BUILD SUCCESSFUL` (100% test pass rate).
-  - `./gradlew.bat :androidApp:bundleRelease` — `BUILD SUCCESSFUL` (Signed Release `.aab` generated).
-  - `./gradlew.bat installDebug` — `BUILD SUCCESSFUL` (Installed & rendered on running emulator).
+  - `./gradlew.bat test` — `BUILD SUCCESSFUL` (full unit-test regression suite).
+  - `./gradlew.bat :androidApp:assembleDebug` — `BUILD SUCCESSFUL` (debug APK assembled with merged widget receiver and FileProvider).
+  - `./gradlew.bat :shared:lintDebug` — `BUILD SUCCESSFUL`.
+  - `./gradlew.bat :androidApp:lintDebug` — `BUILD SUCCESSFUL`.
+  - Commands were run separately with one Gradle worker to stay within the host JVM memory ceiling; the combined run stopped due to GC thrashing rather than a code failure.
 
 ---
 
@@ -45,6 +49,18 @@
 | **Acceptance Checklist (P0–P6 Regressions)** | All modules | **COMPLETED** | Full regression check passing 100% with zero errors. |
 | **Architectural Decision Records** | `DECISION_LOG.md` | **COMPLETED** | Added D-032 (Connectivity & Offline Resilience), D-033 (In-App Privacy & Voluntary Sponsorship), D-034 (AAB & Baseline Profiles). |
 
+### Extended P7 deliverables (2026-09-04)
+
+| Deliverable | Primary locations | Status | Verification notes |
+|---|---|---|---|
+| **Today's Feeling calendar** | `TodaysFeelingCalendar.kt`, `GrowthScreenModel.kt`, `TodaysFeelingCalendarTest.kt` | **COMPLETED** | Monday-first monthly grid, neutral unlogged days, swipe paging, mood/note and same-day reflection details. |
+| **Weekly mood/screen-time correlation** | `GetWeeklyMoodScreenTimeCorrelationUseCase.kt`, `MoodScreenTimeCorrelationChart.*.kt`, `WeeklyMoodScreenTimeCard.kt` | **COMPLETED** | Vico dual-axis chart is gated behind five current-week mood days; generated wording remains observational. |
+| **Missed-check-in invitation** | `MissedCheckInWorker.kt`, `MissedCheckInReminderPolicy.kt`, `SettingsScreen.kt` | **COMPLETED** | WorkManager unique work, configurable 18:00 default, once-per-local-date guard, Digital Sunset exclusion, dedicated opt-out. |
+| **Glance companion widget** | `AwareMateCompanionWidget.kt`, `CompanionVisualState.kt`, `LogMoodUseCase.kt` | **COMPLETED** | Uses shared companion/mood mappings and the same mutex-protected mood use case, so MoodEntry and XP behavior match in-app check-in. |
+| **Onboarding purpose explainer** | `OnboardingState.kt`, `OnboardingScreenModel.kt`, `OnboardingScreen.kt` | **COMPLETED** | Added between Welcome and Interests; part of the only first-run route and reset only with account deletion. |
+| **Account and data deletion** | `DeleteAccountUseCase.kt`, `AndroidAccountDeletionService.kt`, `AccountDataDao.kt`, `SettingsScreen.kt` | **COMPLETED** | In-app confirmation; Firestore removal with compensating restore, Firebase Auth deletion, transactional Room clear, preference reset, sign-out, welcome routing; offline signed-in attempts make no writes. |
+| **Private weekly image share** | `WeeklyInsightShareSection.kt`, `WeeklyInsightShareSection.android.kt`, `share_file_paths.xml` | **COMPLETED** | Captures the visible mood strip and available correlation chart to PNG, then shares a scoped cache URI through Android's chooser. |
+
 ---
 
 ## 3. Full Roadmap Phase Progress Overview
@@ -58,7 +74,7 @@
 | **P4** | UI foundation and navigation (Voyager, Design System, Onboarding) | **COMPLETED (100% Verified)** |
 | **P5** | Digital awareness module (UsageStats, Vico charts, Nudges, Sunset) | **COMPLETED (100% Verified)** |
 | **P6** | Personal growth module (Mood journal, Breath exercises, Hobbies, Self-Discovery, Insights) | **COMPLETED (100% Verified)** |
-| **P7** | Polish and release readiness (Accessibility, Offline sync, Crashlytics, Store listing, CI/CD) | **COMPLETED (100% Verified)** |
+| **P7** | Polish and release readiness, including extended insight, widget, deletion, and private-share scope | **COMPLETED (100% Verified)** |
 
 ---
 

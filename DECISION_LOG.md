@@ -307,5 +307,29 @@ This log records major architectural and product decisions for the AwareMate pro
 - **Rationale:** Glance is the official Compose-style Android widget API, but it renders through RemoteViews and cannot host the existing Compose `Canvas`. Sharing domain visual state and check-in logic preserves a single source of truth without duplicating artwork or gamification rules.
 - **Consequences:** The Android launcher widget reflects an existing daily check-in and disables further emoji actions for that day; stale or rapid taps are also rejected in the shared use case with no duplicate MoodEntry or XP.
 
+### D-036: WorkManager Unique One-Time Scheduling for Evening Check-In Invitations
+- **Date:** 2026-09-04
+- **Status:** Accepted
+- **Context:** The missed-check-in invitation must run after a configurable local time, remain at most once per local day, respond immediately to settings changes, and avoid Digital Sunset without adopting an escalating reminder cadence.
+- **Decision:** Use stable AndroidX WorkManager 2.11.2. Schedule one uniquely named `OneTimeWorkRequest` for the next eligible local time with `ExistingWorkPolicy.REPLACE`, then schedule the following day only after the worker runs. Re-evaluate preferences, today's Room mood entries, notification-date guard, and current Digital Sunset state inside `MissedCheckInWorker` before posting the fixed invitation text.
+- **Rationale:** Recalculating a one-time request preserves local wall-clock intent across setting changes and avoids the flex-window and cadence limitations of periodic work. A unique work name prevents parallel schedules, while the persisted local-date guard is the final at-most-once control.
+- **Consequences:** Disabling either notification toggle cancels pending work; changing the time replaces it; missed days never increase frequency or alter tone.
+
+### D-037: Recoverable Remote-First Account Deletion with Transactional Local Erasure
+- **Date:** 2026-09-04
+- **Status:** Accepted
+- **Context:** Play-compliant account deletion must complete in-app, remove Firestore/Auth/Room state, avoid offline partial deletion, and still support legacy users whose data predates an authenticated Firebase session.
+- **Decision:** New onboarding establishes an anonymous Firebase account before first persistence, and Firestore writes use that Firebase UID as their cloud owner key. For signed-in deletion, preflight connectivity, read all known user cloud documents before any write, delete them in bounded Firestore batches, and restore captured documents if a later batch or Firebase Auth deletion fails. Only after remote success does `AccountDataDao` clear all Room tables in one transaction, reset DataStore preferences, explicitly sign out, and route to onboarding. Local-only legacy profiles skip the nonexistent remote phase and erase locally.
+- **Rationale:** Remote-first ordering keeps the local source of truth available for retry whenever the network or Auth operation fails. Firestore batches plus compensating restore minimize inconsistent remote state, while one Room transaction prevents partial on-device table clearing.
+- **Consequences:** Signed-in offline attempts perform zero destructive writes and show a retryable message. Auth providers subject to Firebase's recent-login rule receive a clear re-authentication error, with cloud records restored before it is surfaced.
+
+### D-038: Compose GraphicsLayer Capture and Scoped FileProvider Sharing
+- **Date:** 2026-09-04
+- **Status:** Accepted
+- **Context:** Weekly insights need a private user-initiated image export without a custom gallery, social feed, broad storage permission, or a second rendering implementation for the correlation chart.
+- **Decision:** Render the weekly mood strip and existing `MoodScreenTimeCorrelationChart` inside one visible Compose card, record that card with `rememberGraphicsLayer`, convert it with `toImageBitmap`, and write a PNG only to the app cache. Share it through a narrowly scoped `FileProvider` URI and Android `ACTION_SEND` chooser with temporary read permission.
+- **Rationale:** This follows the official Compose capture and Android secure-file-sharing patterns, preserves the exact in-app visual, and keeps the exported artifact private until the user explicitly chooses a recipient.
+- **Consequences:** No media/storage permission, public feed, comparison, leaderboard, or retained in-app gallery is introduced; the correlation portion stays subject to the same five-day availability gate.
+
 
 

@@ -73,6 +73,13 @@
 - [x] Google Play Store internal test track
 - [x] Firebase Crashlytics + Analytics integration
 - [x] Run complete acceptance checklist
+- [x] Add a non-punitive monthly "Today's Feeling" mood calendar with day details and month paging
+- [x] Add a private weekly mood/energy and screen-time correlation view with a five-day insight gate
+- [x] Add a configurable, once-daily missed-check-in invitation using WorkManager and Digital Sunset rules
+- [x] Add a Jetpack Glance companion widget that reuses the canonical mood logging/reward path
+- [x] Add the mandatory-through-flow "why this app exists" onboarding explainer
+- [x] Add in-app account and data deletion with offline preflight and recoverable remote deletion
+- [x] Add private weekly insight image export through the Android system share sheet
 
 ---
 
