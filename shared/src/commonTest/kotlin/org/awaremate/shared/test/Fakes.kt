@@ -195,6 +195,8 @@ class FakeCloudSyncService : CloudSyncService {
 
 class FakeAuthService : AuthService {
     private val _authState = MutableStateFlow<User?>(null)
+    var signOutCalls: Int = 0
+        private set
     override val authState: Flow<User?> = _authState
     override val currentUser: User? get() = _authState.value
 
@@ -211,6 +213,7 @@ class FakeAuthService : AuthService {
     }
 
     override suspend fun signOut(): Result<Unit> {
+        signOutCalls += 1
         _authState.value = null
         return Result.success(Unit)
     }

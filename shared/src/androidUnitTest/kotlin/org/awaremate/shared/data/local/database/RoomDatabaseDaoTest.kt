@@ -193,4 +193,30 @@ class RoomDatabaseDaoTest {
         assertTrue(updated[0].completed)
         assertEquals(1725285000000L, updated[0].completedAtEpochMs)
     }
+
+    @Test
+    fun accountDataDaoClearsPersistedAccountRows() = runTest {
+        database.userDao().insertUser(
+            UserEntity(
+                id = "delete-me",
+                displayName = "Deletion audit",
+                isAnonymous = true
+            )
+        )
+        database.moodEntryDao().insertMoodEntry(
+            MoodEntryEntity(
+                id = "delete-mood",
+                userId = "delete-me",
+                timestampEpochMs = 1_725_280_000_000L,
+                emoji = "🌱",
+                moodScore = 4,
+                energyLevel = 3
+            )
+        )
+
+        database.accountDataDao().clearAllAccountData()
+
+        assertEquals(null, database.userDao().getUserById("delete-me"))
+        assertTrue(database.moodEntryDao().getAllMoodEntriesFlow().first().isEmpty())
+    }
 }

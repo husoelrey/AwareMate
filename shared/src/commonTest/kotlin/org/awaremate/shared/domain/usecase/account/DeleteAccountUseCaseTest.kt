@@ -34,6 +34,7 @@ class DeleteAccountUseCaseTest {
         assertEquals(1, local.clearCalls)
         assertFalse(preferences.getPreferences().first().onboardingCompleted)
         assertEquals("SYSTEM", preferences.getPreferences().first().themeMode)
+        assertEquals(1, auth.signOutCalls)
         assertNull(auth.currentUser)
     }
 
@@ -52,6 +53,7 @@ class DeleteAccountUseCaseTest {
         assertNull(remote.deletedUserId)
         assertEquals(0, local.clearCalls)
         assertEquals(true, preferences.getPreferences().first().onboardingCompleted)
+        assertEquals(0, auth.signOutCalls)
         assertEquals("anon-123", auth.currentUser?.id)
     }
 

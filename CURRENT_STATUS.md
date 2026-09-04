@@ -1,6 +1,6 @@
 # AwareMate - Current Status
 
-**Last Updated:** 2026-09-04T16:01:10+03:00
+**Last Updated:** 2026-09-04T20:40:28+03:00
 **Repository Path:** `c:\Users\husoelrey\Documents\Projects\AwareMate`  
 **Branch:** `codex/p7-extended-polish`
 **Current Phase:** P7 Extended Scope Completed (100% Verified) — **Compassionate Insights, Gentle Re-engagement, Data Control, Private Sharing**
@@ -60,6 +60,25 @@
 | **Onboarding purpose explainer** | `OnboardingState.kt`, `OnboardingScreenModel.kt`, `OnboardingScreen.kt` | **COMPLETED** | Added between Welcome and Interests; part of the only first-run route and reset only with account deletion. |
 | **Account and data deletion** | `DeleteAccountUseCase.kt`, `AndroidAccountDeletionService.kt`, `AccountDataDao.kt`, `SettingsScreen.kt` | **COMPLETED** | In-app confirmation; Firestore removal with compensating restore, Firebase Auth deletion, transactional Room clear, preference reset, sign-out, welcome routing; offline signed-in attempts make no writes. |
 | **Private weekly image share** | `WeeklyInsightShareSection.kt`, `WeeklyInsightShareSection.android.kt`, `share_file_paths.xml` | **COMPLETED** | Captures the visible mood strip and available correlation chart to PNG, then shares a scoped cache URI through Android's chooser. |
+
+### Extended P7 acceptance audit (2026-09-04)
+
+All seven requested items are **PASS** after code tracing, automated tests, and Android emulator walkthroughs:
+
+1. **Mood calendar — PASS:** September 2026 displayed unlogged dates with neutral surface coloring and `no check-in saved` semantics. Opening the logged 2026-09-04 cell displayed the matching `Mood 5/5`, `Energy 5/5`, and saved note state.
+2. **Correlation — PASS:** Robolectric Compose coverage confirms three mood days show the encouraging empty state with no chart, while five days render the chart. Every generated insight variant is observational and contains none of `causes`, `because of`, or `due to`.
+3. **Notification — PASS:** policy tests cover the persisted once-per-local-date guard, configured earliest time, Digital Sunset/bedtime suppression, both opt-out switches, and fixed non-escalating copy. A live Settings restart confirmed the dedicated invitation toggle remained disabled and its time controls stayed hidden.
+4. **Widget — PASS:** widget and in-app check-in both invoke the singleton `LogMoodUseCase.invoke`. Its mutex-protected same-local-date guard returns `ALREADY_LOGGED_TODAY`; the duplicate test leaves one entry and one XP award, while the widget refreshes to the visible saved-today state.
+5. **Onboarding — PASS:** a clean-device walkthrough showed the explainer only as step 2 of 6 between Welcome and Interests. Completing onboarding and force-restarting opened the main dashboard without replaying it. Firebase sign-in failure was found during the audit and fixed so local-first onboarding still completes; regression coverage passes.
+6. **Account deletion — PASS:** an Android instrumentation test against local Firebase Auth and Firestore emulators creates cloud records, invokes `AndroidAccountDeletionService`, and confirms direct user/companion documents plus the queried mood document are absent via `Source.SERVER`; Firebase Auth reports no current user. A real in-memory Room test confirms persisted user and mood rows are gone after `AccountDataDao.clearAllAccountData()`, and use-case tests confirm preference reset plus exactly one sign-out. The signed-in offline Settings intent reports `You're offline. Nothing was deleted. Reconnect and try again when you're ready.` and performs zero remote, Room, or sign-out operations.
+7. **Shareable card — PASS:** the Android chooser opened after exporting `awaremate_weekly_insight.png`; visual inspection confirmed the rendered image contains only the user's own weekly pattern and no comparison, percentile, ranking, or leaderboard. A feature-scoped source scan found no forbidden ranking constructs.
+
+Verification commands/results:
+
+- `./gradlew.bat test --no-daemon --max-workers=1` — **BUILD SUCCESSFUL**.
+- `./gradlew.bat :androidApp:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=org.awaremate.android.AccountDeletionFirebaseEmulatorTest --no-daemon --max-workers=1` — **BUILD SUCCESSFUL** against Auth/Firestore emulators configured by `firebase.audit.json`.
+- `./gradlew.bat :shared:lintDebug :androidApp:lintDebug :androidApp:assembleRelease --no-daemon --max-workers=1` — completed successfully (daemon exit status 0); both lint reports were produced and the release APK was assembled.
+- Release APK: `androidApp/build/outputs/apk/release/androidApp-release.apk`, application ID `org.awaremate.android`, version `1.0.0`, SHA-256 `E4FA323E9C9B299FCBD626B12294F235145172147EDF60AF9DBC121BA4BE5682`. It is signed with the documented debug-key fallback and is suitable for internal testing, not Play production distribution.
 
 ---
 
