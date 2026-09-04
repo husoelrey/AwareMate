@@ -66,6 +66,7 @@ class SettingsScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         var showPrivacyDialog by remember { mutableStateOf(false) }
         var hasUsageAccess by remember { mutableStateOf(hasUsageStatsPermission()) }
+        val requestNotificationPermission = rememberNotificationPermissionRequester()
 
         LaunchedEffect(Unit) {
             while (true) {
@@ -221,6 +222,7 @@ class SettingsScreen : Screen {
                                     }
                                 )
                             }
+
                         }
                     }
 
@@ -394,11 +396,70 @@ class SettingsScreen : Screen {
                                 }
                                 Switch(
                                     checked = state.preferences.notificationsEnabled,
-                                    onCheckedChange = { screenModel.handleIntent(SettingsIntent.SetNotifications(it)) },
+                                    onCheckedChange = {
+                                        if (it) requestNotificationPermission()
+                                        screenModel.handleIntent(SettingsIntent.SetNotifications(it))
+                                    },
                                     modifier = Modifier.semantics {
                                         contentDescription = "Toggle mindful notifications, currently ${if (state.preferences.notificationsEnabled) "enabled" else "disabled"}"
                                     }
                                 )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "Evening mood invitation",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = "One gentle invitation at most, only when today has no check-in",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Switch(
+                                    checked = state.preferences.missedCheckInReminderEnabled,
+                                    onCheckedChange = {
+                                        if (it) requestNotificationPermission()
+                                        screenModel.handleIntent(SettingsIntent.SetMissedCheckInReminder(it))
+                                    },
+                                    modifier = Modifier.semantics {
+                                        contentDescription = "Toggle evening mood invitation, currently ${if (state.preferences.missedCheckInReminderEnabled) "enabled" else "disabled"}"
+                                    }
+                                )
+                            }
+
+                            if (state.preferences.missedCheckInReminderEnabled) {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = "Earliest invitation time",
+                                    style = MaterialTheme.typography.labelLarge
+                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    listOf(18, 19, 20).forEach { hour ->
+                                        FilterChip(
+                                            selected = state.preferences.missedCheckInReminderHour == hour,
+                                            onClick = {
+                                                screenModel.handleIntent(SettingsIntent.SetMissedCheckInTime(hour))
+                                            },
+                                            label = { Text("${hour}:00") },
+                                            modifier = Modifier.semantics {
+                                                contentDescription = "Set earliest mood invitation time to ${hour}:00"
+                                            }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

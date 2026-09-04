@@ -8,9 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.awaremate.shared.domain.repository.PreferencesRepository
+import org.awaremate.shared.domain.service.MissedCheckInReminderScheduler
 
 class SettingsScreenModel(
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val missedCheckInReminderScheduler: MissedCheckInReminderScheduler? = null
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(SettingsState(isLoading = true))
@@ -47,6 +49,7 @@ class SettingsScreenModel(
             is SettingsIntent.SetNotifications -> {
                 screenModelScope.launch {
                     preferencesRepository.updatePreferences { it.copy(notificationsEnabled = intent.enabled) }
+                    missedCheckInReminderScheduler?.refresh()
                 }
             }
 
@@ -65,6 +68,27 @@ class SettingsScreenModel(
             is SettingsIntent.SetBedtime -> {
                 screenModelScope.launch {
                     preferencesRepository.updatePreferences { it.copy(bedtimeHour = intent.hour, bedtimeMinute = intent.minute) }
+                }
+            }
+
+            is SettingsIntent.SetMissedCheckInReminder -> {
+                screenModelScope.launch {
+                    preferencesRepository.updatePreferences {
+                        it.copy(missedCheckInReminderEnabled = intent.enabled)
+                    }
+                    missedCheckInReminderScheduler?.refresh()
+                }
+            }
+
+            is SettingsIntent.SetMissedCheckInTime -> {
+                screenModelScope.launch {
+                    preferencesRepository.updatePreferences {
+                        it.copy(
+                            missedCheckInReminderHour = intent.hour,
+                            missedCheckInReminderMinute = intent.minute
+                        )
+                    }
+                    missedCheckInReminderScheduler?.refresh()
                 }
             }
 

@@ -9,7 +9,8 @@ enum class NudgeType {
     DAILY_GOAL_REACHED,
     POSTURE_BREATHE,
     HYDRATION,
-    EVENING_SUNSET
+    EVENING_SUNSET,
+    MOOD_CHECK_IN
 }
 
 @Serializable
@@ -21,6 +22,13 @@ data class NudgeMessage(
 )
 
 object MindfulNudgeCatalog {
+    val missedCheckIn = NudgeMessage(
+        id = "daily_mood_invitation",
+        title = "A quiet check-in",
+        body = "How's today going? Your companion would love to hear.",
+        type = NudgeType.MOOD_CHECK_IN
+    )
+
     val continuousNudges = listOf(
         NudgeMessage(
             id = "continuous_1",

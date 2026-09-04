@@ -168,7 +168,12 @@ val commonModule = module {
             completeDailyChallengeUseCase = get()
         )
     }
-    factory { SettingsScreenModel(preferencesRepository = get()) }
+    factory {
+        SettingsScreenModel(
+            preferencesRepository = get(),
+            missedCheckInReminderScheduler = getOrNull()
+        )
+    }
     factory {
         ProfileScreenModel(
             userRepository = get(),

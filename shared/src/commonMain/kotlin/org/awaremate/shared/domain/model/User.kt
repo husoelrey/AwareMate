@@ -20,6 +20,10 @@ data class UserPreferences(
     val dailyScreenTimeGoalMinutes: Int = 180,
     val bedtimeHour: Int = 22,
     val bedtimeMinute: Int = 30,
+    val missedCheckInReminderEnabled: Boolean = true,
+    val missedCheckInReminderHour: Int = 18,
+    val missedCheckInReminderMinute: Int = 0,
+    val lastMissedCheckInNotificationDate: String? = null,
     val dynamicColorEnabled: Boolean = true,
     val themeMode: String = "SYSTEM"
 )

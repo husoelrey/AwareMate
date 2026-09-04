@@ -16,5 +16,7 @@ sealed interface SettingsIntent {
     data class SetDailyGoal(val minutes: Int) : SettingsIntent
     data class SetNudgeThreshold(val minutes: Int) : SettingsIntent
     data class SetBedtime(val hour: Int, val minute: Int) : SettingsIntent
+    data class SetMissedCheckInReminder(val enabled: Boolean) : SettingsIntent
+    data class SetMissedCheckInTime(val hour: Int, val minute: Int = 0) : SettingsIntent
     data object ClearInfoMessage : SettingsIntent
 }

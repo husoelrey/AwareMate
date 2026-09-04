@@ -12,8 +12,10 @@ import org.awaremate.shared.data.remote.AuthService
 import org.awaremate.shared.data.remote.CloudSyncService
 import org.awaremate.shared.data.repository.AndroidUsageStatsRepository
 import org.awaremate.shared.data.service.AndroidNotificationService
+import org.awaremate.shared.data.worker.AndroidMissedCheckInReminderScheduler
 import org.awaremate.shared.domain.repository.UsageStatsRepository
 import org.awaremate.shared.domain.service.NotificationService
+import org.awaremate.shared.domain.service.MissedCheckInReminderScheduler
 import org.koin.dsl.module
 
 val androidPlatformModule = module {
@@ -40,6 +42,9 @@ val androidPlatformModule = module {
     }
     single<NotificationService> {
         AndroidNotificationService(context = get())
+    }
+    single<MissedCheckInReminderScheduler> {
+        AndroidMissedCheckInReminderScheduler(context = get(), preferencesRepository = get())
     }
 
     // Network Connectivity Observer

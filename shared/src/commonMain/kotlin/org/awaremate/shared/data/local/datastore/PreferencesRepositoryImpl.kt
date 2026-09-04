@@ -26,6 +26,10 @@ class PreferencesRepositoryImpl(
         val DAILY_SCREEN_TIME_GOAL = intPreferencesKey("daily_screen_time_goal_minutes")
         val BEDTIME_HOUR = intPreferencesKey("bedtime_hour")
         val BEDTIME_MINUTE = intPreferencesKey("bedtime_minute")
+        val MISSED_CHECK_IN_ENABLED = booleanPreferencesKey("missed_check_in_enabled")
+        val MISSED_CHECK_IN_HOUR = intPreferencesKey("missed_check_in_hour")
+        val MISSED_CHECK_IN_MINUTE = intPreferencesKey("missed_check_in_minute")
+        val LAST_MISSED_CHECK_IN_DATE = stringPreferencesKey("last_missed_check_in_date")
         val DYNAMIC_COLOR_ENABLED = booleanPreferencesKey("dynamic_color_enabled")
         val THEME_MODE = stringPreferencesKey("theme_mode")
     }
@@ -41,6 +45,10 @@ class PreferencesRepositoryImpl(
                     dailyScreenTimeGoalMinutes = prefs[Keys.DAILY_SCREEN_TIME_GOAL] ?: 180,
                     bedtimeHour = prefs[Keys.BEDTIME_HOUR] ?: 22,
                     bedtimeMinute = prefs[Keys.BEDTIME_MINUTE] ?: 30,
+                    missedCheckInReminderEnabled = prefs[Keys.MISSED_CHECK_IN_ENABLED] ?: true,
+                    missedCheckInReminderHour = prefs[Keys.MISSED_CHECK_IN_HOUR] ?: 18,
+                    missedCheckInReminderMinute = prefs[Keys.MISSED_CHECK_IN_MINUTE] ?: 0,
+                    lastMissedCheckInNotificationDate = prefs[Keys.LAST_MISSED_CHECK_IN_DATE],
                     dynamicColorEnabled = prefs[Keys.DYNAMIC_COLOR_ENABLED] ?: true,
                     themeMode = prefs[Keys.THEME_MODE] ?: "SYSTEM"
                 )
@@ -56,6 +64,10 @@ class PreferencesRepositoryImpl(
                 dailyScreenTimeGoalMinutes = prefs[Keys.DAILY_SCREEN_TIME_GOAL] ?: 180,
                 bedtimeHour = prefs[Keys.BEDTIME_HOUR] ?: 22,
                 bedtimeMinute = prefs[Keys.BEDTIME_MINUTE] ?: 30,
+                missedCheckInReminderEnabled = prefs[Keys.MISSED_CHECK_IN_ENABLED] ?: true,
+                missedCheckInReminderHour = prefs[Keys.MISSED_CHECK_IN_HOUR] ?: 18,
+                missedCheckInReminderMinute = prefs[Keys.MISSED_CHECK_IN_MINUTE] ?: 0,
+                lastMissedCheckInNotificationDate = prefs[Keys.LAST_MISSED_CHECK_IN_DATE],
                 dynamicColorEnabled = prefs[Keys.DYNAMIC_COLOR_ENABLED] ?: true,
                 themeMode = prefs[Keys.THEME_MODE] ?: "SYSTEM"
             )
@@ -66,6 +78,12 @@ class PreferencesRepositoryImpl(
             prefs[Keys.DAILY_SCREEN_TIME_GOAL] = updated.dailyScreenTimeGoalMinutes
             prefs[Keys.BEDTIME_HOUR] = updated.bedtimeHour
             prefs[Keys.BEDTIME_MINUTE] = updated.bedtimeMinute
+            prefs[Keys.MISSED_CHECK_IN_ENABLED] = updated.missedCheckInReminderEnabled
+            prefs[Keys.MISSED_CHECK_IN_HOUR] = updated.missedCheckInReminderHour
+            prefs[Keys.MISSED_CHECK_IN_MINUTE] = updated.missedCheckInReminderMinute
+            updated.lastMissedCheckInNotificationDate?.let {
+                prefs[Keys.LAST_MISSED_CHECK_IN_DATE] = it
+            } ?: prefs.remove(Keys.LAST_MISSED_CHECK_IN_DATE)
             prefs[Keys.DYNAMIC_COLOR_ENABLED] = updated.dynamicColorEnabled
             prefs[Keys.THEME_MODE] = updated.themeMode
         }

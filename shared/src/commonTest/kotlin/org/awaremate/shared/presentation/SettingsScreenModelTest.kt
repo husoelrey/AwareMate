@@ -44,6 +44,19 @@ class SettingsScreenModelTest {
         assertTrue(prefs.notificationsEnabled)
         assertEquals(180, prefs.dailyScreenTimeGoalMinutes)
         assertEquals(30, prefs.nudgeThresholdMinutes)
+        assertTrue(prefs.missedCheckInReminderEnabled)
+        assertEquals(18, prefs.missedCheckInReminderHour)
+    }
+
+    @Test
+    fun testChangeMissedCheckInReminderSettings() = runTest(testDispatcher) {
+        screenModel.handleIntent(SettingsIntent.SetMissedCheckInReminder(false))
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertFalse(screenModel.state.value.preferences.missedCheckInReminderEnabled)
+
+        screenModel.handleIntent(SettingsIntent.SetMissedCheckInTime(20))
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(20, screenModel.state.value.preferences.missedCheckInReminderHour)
     }
 
     @Test

@@ -63,6 +63,7 @@ import kotlinx.coroutines.delay
 import org.awaremate.shared.hasUsageStatsPermission
 import org.awaremate.shared.openUsageAccessSettings
 import org.awaremate.shared.presentation.main.MainScreen
+import org.awaremate.shared.presentation.settings.rememberNotificationPermissionRequester
 
 class OnboardingScreen : Screen {
 
@@ -488,6 +489,7 @@ private fun PermissionsStep(
     onNext: () -> Unit
 ) {
     var hasUsageAccess by remember { mutableStateOf(hasUsageStatsPermission()) }
+    val requestNotificationPermission = rememberNotificationPermissionRequester()
 
     // Live polling when returning from Android Settings
     LaunchedEffect(Unit) {
@@ -707,7 +709,10 @@ private fun PermissionsStep(
 
                     Switch(
                         checked = notificationsEnabled,
-                        onCheckedChange = onToggleNotifications,
+                        onCheckedChange = {
+                            if (it) requestNotificationPermission()
+                            onToggleNotifications(it)
+                        },
                         modifier = Modifier.semantics {
                             contentDescription = "Toggle mindful notifications switch, currently ${if (notificationsEnabled) "enabled" else "disabled"}"
                         }
@@ -732,7 +737,10 @@ private fun PermissionsStep(
             }
             Spacer(modifier = Modifier.width(16.dp))
             Button(
-                onClick = onNext,
+                onClick = {
+                    if (notificationsEnabled) requestNotificationPermission()
+                    onNext()
+                },
                 modifier = Modifier
                     .weight(1f)
                     .semantics { contentDescription = "Continue to daily intentions" }
