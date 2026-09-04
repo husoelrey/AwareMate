@@ -173,14 +173,11 @@ class GrowthScreen : Screen {
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(12.dp))
-                                OutlinedButton(
-                                    onClick = { screenModel.handleIntent(GrowthIntent.OpenMoodDialog) },
-                                    modifier = Modifier.semantics {
-                                        contentDescription = "Update today's mood check-in"
-                                    }
-                                ) {
-                                    Text("Update Check-in")
-                                }
+                                Text(
+                                    text = "Today's check-in is saved. You can revisit it in the calendar below.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
                             } else {
                                 Text(
                                     text = "Track your emotional climate without judgement. Every feeling is welcome here.",

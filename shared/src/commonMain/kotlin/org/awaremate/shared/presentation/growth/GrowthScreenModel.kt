@@ -34,6 +34,8 @@ import org.awaremate.shared.domain.usecase.growth.GetPersonalizedHobbiesUseCase
 import org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodInsightsUseCase
 import org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodScreenTimeCorrelationUseCase
 import org.awaremate.shared.domain.usecase.growth.LogMoodUseCase
+import org.awaremate.shared.domain.usecase.growth.MoodLogOutcome
+import org.awaremate.shared.presentation.widget.updateCompanionCheckInWidget
 
 class GrowthScreenModel(
     private val moodRepository: MoodRepository,
@@ -167,11 +169,19 @@ class GrowthScreenModel(
                         tags = intent.tags
                     )
                     val result = logMoodUseCase(entry)
-                    if (result.isSuccess) {
+                    if (result.getOrNull() == MoodLogOutcome.CREATED) {
+                        updateCompanionCheckInWidget()
                         _state.update {
                             it.copy(
                                 isMoodDialogOpen = false,
                                 snackbarMessage = "Mood recorded! Companion is feeling peaceful 🌱 +15 XP"
+                            )
+                        }
+                    } else if (result.getOrNull() == MoodLogOutcome.ALREADY_LOGGED_TODAY) {
+                        _state.update {
+                            it.copy(
+                                isMoodDialogOpen = false,
+                                snackbarMessage = "Today's check-in is already safely recorded."
                             )
                         }
                     }

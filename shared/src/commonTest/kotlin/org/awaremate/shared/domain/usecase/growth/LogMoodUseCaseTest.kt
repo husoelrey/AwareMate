@@ -48,6 +48,7 @@ class LogMoodUseCaseTest {
 
         val result = logMoodUseCase(entry)
         assertTrue(result.isSuccess)
+        assertEquals(MoodLogOutcome.CREATED, result.getOrNull())
 
         // 1. Check entry in repository
         val stored = moodRepo.getAllMoodEntries().first()
@@ -63,5 +64,10 @@ class LogMoodUseCaseTest {
 
         // 3. Check companion emotion became PEACEFUL
         assertEquals(CompanionEmotion.PEACEFUL, companion?.emotion)
+
+        val duplicateResult = logMoodUseCase(entry.copy(id = "second_attempt", emoji = "🌿"))
+        assertEquals(MoodLogOutcome.ALREADY_LOGGED_TODAY, duplicateResult.getOrNull())
+        assertEquals(1, moodRepo.getAllMoodEntries().first().size)
+        assertEquals(15, companionRepo.getCompanion().first()?.wisdomXp)
     }
 }

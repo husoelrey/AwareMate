@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.awaremate.shared.domain.model.Companion
+import org.awaremate.shared.domain.model.toVisualState
 import org.awaremate.shared.domain.usecase.companion.CompanionGrowthMetrics
 import org.awaremate.shared.presentation.companion.CompanionCanvas
 
@@ -39,8 +40,9 @@ fun CompanionWidget(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val stageName = companion.stage.name.lowercase().replaceFirstChar { it.uppercase() }
-    val emotionName = companion.emotion.name.lowercase().replaceFirstChar { it.uppercase() }
+    val visualState = companion.toVisualState()
+    val stageName = visualState.stageLabel
+    val emotionName = visualState.emotionLabel
 
     Card(
         shape = RoundedCornerShape(20.dp),

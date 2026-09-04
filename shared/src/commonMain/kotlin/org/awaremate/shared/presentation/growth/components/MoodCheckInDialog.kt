@@ -40,13 +40,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private data class MoodOption(
+data class MoodOption(
     val emoji: String,
     val score: Int,
     val label: String
 )
 
-private val moodOptions = listOf(
+val moodOptions = listOf(
     MoodOption("😄", 5, "Joyful"),
     MoodOption("😊", 4, "Content"),
     MoodOption("🌿", 3, "Steady"),
@@ -60,6 +60,8 @@ private val availableTags = listOf(
     "☕ Quiet Time", "🏃 Movement"
 )
 
+const val DEFAULT_MOOD_CHECK_IN_ENERGY_LEVEL = 3
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MoodCheckInDialog(
@@ -68,7 +70,7 @@ fun MoodCheckInDialog(
     modifier: Modifier = Modifier
 ) {
     var selectedMood by remember { mutableStateOf(moodOptions[1]) }
-    var energyLevel by remember { mutableFloatStateOf(3f) }
+    var energyLevel by remember { mutableFloatStateOf(DEFAULT_MOOD_CHECK_IN_ENERGY_LEVEL.toFloat()) }
     var noteText by remember { mutableStateOf("") }
     val selectedTags = remember { mutableStateListOf<String>() }
 

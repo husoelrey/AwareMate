@@ -299,5 +299,13 @@ This log records major architectural and product decisions for the AwareMate pro
 - **Rationale:** Maximizes runtime performance and cold launch responsiveness (<1000ms) on modern Android devices while automating store bundle generation.
 - **Consequences:** Produces signed `.aab` bundles ready for instant upload to Google Play Console.
 
+### D-035: Jetpack Glance Companion Check-In Widget
+- **Date:** 2026-09-04
+- **Status:** Accepted
+- **Context:** Adding a responsive Android home-screen widget without creating a parallel mood reward path or duplicating the Compose Canvas companion artwork in a RemoteViews-only surface.
+- **Decision:** Use stable Jetpack Glance 1.2.0 with a `GlanceAppWidgetReceiver` and `ActionCallback`. The widget derives its compact plant/emotion visual from the same `Companion` stage and emotion state used by the in-app canvas, and imports the same mood option mapping used by `MoodCheckInDialog`. Widget taps invoke the existing singleton `LogMoodUseCase`; a mutex-protected one-entry-per-local-day guard ensures the shared +15 Wisdom XP path can run only once. Glance instances refresh after both widget and in-app check-ins.
+- **Rationale:** Glance is the official Compose-style Android widget API, but it renders through RemoteViews and cannot host the existing Compose `Canvas`. Sharing domain visual state and check-in logic preserves a single source of truth without duplicating artwork or gamification rules.
+- **Consequences:** The Android launcher widget reflects an existing daily check-in and disables further emoji actions for that day; stale or rapid taps are also rejected in the shared use case with no duplicate MoodEntry or XP.
+
 
 
