@@ -78,6 +78,7 @@ class GrowthScreenModel(
 
                     _state.update { current ->
                         current.copy(
+                            moodEntries = moods,
                             recentMoods = moods.take(10),
                             todayMood = todayMood,
                             weeklyInsights = insights

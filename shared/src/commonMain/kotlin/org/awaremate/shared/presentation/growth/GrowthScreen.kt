@@ -44,6 +44,7 @@ import org.awaremate.shared.presentation.growth.components.BreathingGuideDialog
 import org.awaremate.shared.presentation.growth.components.HobbyDiscoverySection
 import org.awaremate.shared.presentation.growth.components.MoodCheckInDialog
 import org.awaremate.shared.presentation.growth.components.SelfDiscoveryCard
+import org.awaremate.shared.presentation.growth.components.TodaysFeelingCalendar
 import org.awaremate.shared.presentation.growth.components.WeeklyMoodInsightsCard
 import org.awaremate.shared.presentation.home.components.DailySparksCard
 
@@ -200,7 +201,15 @@ class GrowthScreen : Screen {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 2. Breath & Grounding Card
+                    // 2. Monthly mood calendar
+                    TodaysFeelingCalendar(
+                        moodEntries = state.moodEntries,
+                        selfDiscoveryPrompts = state.prompts
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // 3. Breath & Grounding Card
                     Card(
                         shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(
@@ -253,7 +262,7 @@ class GrowthScreen : Screen {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 3. Curiosity-Driven Self-Discovery Prompt Card
+                    // 4. Curiosity-Driven Self-Discovery Prompt Card
                     SelfDiscoveryCard(
                         prompt = state.currentPrompt,
                         currentIndex = state.currentPromptIndex,
@@ -267,7 +276,7 @@ class GrowthScreen : Screen {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 4. Offline Hobby Discovery & Personalized Suggestions
+                    // 5. Offline Hobby Discovery & Personalized Suggestions
                     HobbyDiscoverySection(
                         hobbies = if (state.selectedHobbyCategory == null) state.recommendedHobbies else state.allHobbies.filter { it.category == state.selectedHobbyCategory },
                         selectedCategory = state.selectedHobbyCategory,
@@ -282,7 +291,7 @@ class GrowthScreen : Screen {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 5. Daily Micro-Challenges
+                    // 6. Daily Micro-Challenges
                     DailySparksCard(
                         challenges = state.dailyChallenges,
                         onCompleteChallenge = { challenge ->
@@ -292,7 +301,7 @@ class GrowthScreen : Screen {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // 6. Weekly Mood & Growth Insights
+                    // 7. Weekly Mood & Growth Insights
                     WeeklyMoodInsightsCard(insights = state.weeklyInsights)
 
                     Spacer(modifier = Modifier.height(24.dp))

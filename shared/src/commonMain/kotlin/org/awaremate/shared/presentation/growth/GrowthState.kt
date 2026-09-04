@@ -10,6 +10,7 @@ import org.awaremate.shared.domain.model.WeeklyMoodInsights
 
 data class GrowthState(
     val isLoading: Boolean = true,
+    val moodEntries: List<MoodEntry> = emptyList(),
     val recentMoods: List<MoodEntry> = emptyList(),
     val todayMood: MoodEntry? = null,
     val allHobbies: List<Hobby> = emptyList(),
