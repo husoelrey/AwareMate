@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import org.awaremate.shared.data.local.dao.CompanionDao
+import org.awaremate.shared.data.local.dao.AccountDataDao
 import org.awaremate.shared.data.local.dao.DailyChallengeDao
 import org.awaremate.shared.data.local.dao.FocusSessionDao
 import org.awaremate.shared.data.local.dao.HobbyDao
@@ -40,6 +41,7 @@ import org.awaremate.shared.data.local.entity.UserEntity
 @TypeConverters(RoomTypeConverters::class)
 @ConstructedBy(AwareMateDatabaseConstructor::class)
 abstract class AwareMateDatabase : RoomDatabase() {
+    abstract fun accountDataDao(): AccountDataDao
     abstract fun userDao(): UserDao
     abstract fun companionDao(): CompanionDao
     abstract fun moodEntryDao(): MoodEntryDao

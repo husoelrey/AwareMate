@@ -2,6 +2,7 @@ package org.awaremate.shared.data.remote
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import org.awaremate.shared.domain.model.Companion
@@ -15,8 +16,11 @@ import org.awaremate.shared.domain.model.User
 private const val SYNC_TIMEOUT_MS = 2500L
 
 class AndroidFirestoreSyncService(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 ) : CloudSyncService {
+
+    private fun ownerId(fallback: String): String = firebaseAuth.currentUser?.uid ?: fallback
 
     override suspend fun backupUser(user: User): Result<Unit> = runCatching {
         withTimeout(SYNC_TIMEOUT_MS) {
@@ -47,7 +51,7 @@ class AndroidFirestoreSyncService(
                 "creativityXp" to companion.creativityXp,
                 "lastUpdatedEpochMs" to companion.lastUpdatedEpochMs
             )
-            firestore.collection("companions").document(companion.id).set(data, SetOptions.merge()).await()
+            firestore.collection("companions").document(ownerId(companion.id)).set(data, SetOptions.merge()).await()
         }
     }
 
@@ -55,7 +59,7 @@ class AndroidFirestoreSyncService(
         withTimeout(SYNC_TIMEOUT_MS) {
             val data = mapOf(
                 "id" to entry.id,
-                "userId" to entry.userId,
+                "userId" to ownerId(entry.userId),
                 "timestampEpochMs" to entry.timestampEpochMs,
                 "emoji" to entry.emoji,
                 "moodScore" to entry.moodScore,
@@ -71,7 +75,7 @@ class AndroidFirestoreSyncService(
         withTimeout(SYNC_TIMEOUT_MS) {
             val data = mapOf(
                 "id" to session.id,
-                "userId" to session.userId,
+                "userId" to ownerId(session.userId),
                 "startTimeEpochMs" to session.startTimeEpochMs,
                 "durationSeconds" to session.durationSeconds,
                 "category" to session.category.name,
@@ -87,7 +91,7 @@ class AndroidFirestoreSyncService(
         withTimeout(SYNC_TIMEOUT_MS) {
             val data = mapOf(
                 "id" to challenge.id,
-                "userId" to challenge.userId,
+                "userId" to ownerId(challenge.userId),
                 "title" to challenge.title,
                 "description" to challenge.description,
                 "category" to challenge.category.name,

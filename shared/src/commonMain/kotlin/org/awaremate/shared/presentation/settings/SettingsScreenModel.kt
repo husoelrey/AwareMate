@@ -9,10 +9,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.awaremate.shared.domain.repository.PreferencesRepository
 import org.awaremate.shared.domain.service.MissedCheckInReminderScheduler
+import org.awaremate.shared.domain.usecase.account.DeleteAccountResult
+import org.awaremate.shared.domain.usecase.account.DeleteAccountUseCase
 
 class SettingsScreenModel(
     private val preferencesRepository: PreferencesRepository,
-    private val missedCheckInReminderScheduler: MissedCheckInReminderScheduler? = null
+    private val missedCheckInReminderScheduler: MissedCheckInReminderScheduler? = null,
+    private val deleteAccountUseCase: DeleteAccountUseCase? = null
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(SettingsState(isLoading = true))
@@ -92,9 +95,50 @@ class SettingsScreenModel(
                 }
             }
 
+            SettingsIntent.DeleteAccount -> deleteAccount()
+
+            SettingsIntent.ClearAccountDeletionError -> {
+                _state.update { it.copy(accountDeletionError = null) }
+            }
+
             SettingsIntent.ClearInfoMessage -> {
                 _state.update { it.copy(infoMessage = null) }
             }
+        }
+    }
+
+    private fun deleteAccount() {
+        if (_state.value.isDeletingAccount) return
+        val useCase = deleteAccountUseCase ?: run {
+            _state.update { it.copy(accountDeletionError = "Account deletion is unavailable right now.") }
+            return
+        }
+
+        screenModelScope.launch {
+            _state.update {
+                it.copy(isDeletingAccount = true, accountDeletionError = null)
+            }
+            when (val result = useCase()) {
+                DeleteAccountResult.Success -> _state.update {
+                    it.copy(isDeletingAccount = false, accountDeletionCompleted = true)
+                }
+
+                DeleteAccountResult.Offline -> showDeletionError(
+                    "You're offline. Nothing was deleted. Reconnect and try again when you're ready."
+                )
+
+                DeleteAccountResult.RecentAuthenticationRequired -> showDeletionError(
+                    "For your safety, please sign in again before deleting your account. Nothing on this device was deleted."
+                )
+
+                is DeleteAccountResult.Failed -> showDeletionError(result.message)
+            }
+        }
+    }
+
+    private fun showDeletionError(message: String) {
+        _state.update {
+            it.copy(isDeletingAccount = false, accountDeletionError = message)
         }
     }
 }

@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import org.awaremate.shared.data.local.dao.CompanionDao
+import org.awaremate.shared.data.local.dao.AccountDataDao
 import org.awaremate.shared.data.local.dao.DailyChallengeDao
 import org.awaremate.shared.data.local.dao.FocusSessionDao
 import org.awaremate.shared.data.local.dao.MoodEntryDao
@@ -14,6 +15,7 @@ import org.awaremate.shared.data.local.entity.FocusSessionEntity
 import org.awaremate.shared.data.local.entity.MoodEntryEntity
 import org.awaremate.shared.data.local.entity.UserEntity
 import org.awaremate.shared.data.remote.AuthService
+import org.awaremate.shared.data.remote.AccountDeletionService
 import org.awaremate.shared.data.remote.CloudSyncService
 import org.awaremate.shared.domain.model.Companion
 import org.awaremate.shared.domain.model.DailyChallenge
@@ -214,6 +216,34 @@ class FakeAuthService : AuthService {
     }
 }
 
+class FakeAccountDeletionService(
+    var result: Result<Unit> = Result.success(Unit)
+) : AccountDeletionService {
+    var deletedUserId: String? = null
+
+    override suspend fun deleteCloudDataAndAuthAccount(userId: String): Result<Unit> {
+        deletedUserId = userId
+        return result
+    }
+}
+
+class FakeAccountDataDao : AccountDataDao() {
+    var clearCalls: Int = 0
+
+    override suspend fun clearAllAccountData() {
+        clearCalls += 1
+    }
+
+    override suspend fun clearUsers() = Unit
+    override suspend fun clearCompanions() = Unit
+    override suspend fun clearMoodEntries() = Unit
+    override suspend fun clearFocusSessions() = Unit
+    override suspend fun clearDailyChallenges() = Unit
+    override suspend fun clearScreenTimeSnapshots() = Unit
+    override suspend fun clearHobbies() = Unit
+    override suspend fun clearSelfDiscoveryPrompts() = Unit
+}
+
 class FakePreferencesRepository(
     initialPreferences: org.awaremate.shared.domain.model.UserPreferences = org.awaremate.shared.domain.model.UserPreferences()
 ) : org.awaremate.shared.domain.repository.PreferencesRepository {
@@ -318,4 +348,3 @@ class FakeSelfDiscoveryPromptDao : org.awaremate.shared.data.local.dao.SelfDisco
 
     override suspend fun getPromptCount(): Int = prompts.value.size
 }
-

@@ -13,6 +13,7 @@ import org.awaremate.shared.data.local.dao.UserDao
 import org.awaremate.shared.data.local.database.AwareMateDatabase
 import org.awaremate.shared.data.local.datastore.createDataStore
 import org.awaremate.shared.data.remote.AuthService
+import org.awaremate.shared.data.remote.AccountDeletionService
 import org.awaremate.shared.data.remote.CloudSyncService
 import org.awaremate.shared.domain.repository.AuthRepository
 import org.awaremate.shared.domain.repository.CompanionRepository
@@ -23,6 +24,7 @@ import org.awaremate.shared.domain.repository.PreferencesRepository
 import org.awaremate.shared.domain.repository.SyncRepository
 import org.awaremate.shared.domain.repository.UserRepository
 import org.awaremate.shared.test.FakeAuthService
+import org.awaremate.shared.test.FakeAccountDeletionService
 import org.awaremate.shared.test.FakeCloudSyncService
 import org.junit.runner.RunWith
 import org.koin.core.context.startKoin
@@ -48,6 +50,7 @@ class KoinDependencyGraphTest : KoinTest {
             createDataStore(producePath = { context.filesDir.resolve("test_prefs.preferences_pb").absolutePath })
         }
         single<AuthService> { FakeAuthService() }
+        single<AccountDeletionService> { FakeAccountDeletionService() }
         single<CloudSyncService> { FakeCloudSyncService() }
         single<org.awaremate.shared.data.remote.ConnectivityObserver> {
             object : org.awaremate.shared.data.remote.ConnectivityObserver {

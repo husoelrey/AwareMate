@@ -5,7 +5,10 @@ import org.awaremate.shared.domain.model.UserPreferences
 data class SettingsState(
     val preferences: UserPreferences = UserPreferences(),
     val isLoading: Boolean = false,
-    val infoMessage: String? = null
+    val infoMessage: String? = null,
+    val isDeletingAccount: Boolean = false,
+    val accountDeletionError: String? = null,
+    val accountDeletionCompleted: Boolean = false
 )
 
 sealed interface SettingsIntent {
@@ -18,5 +21,7 @@ sealed interface SettingsIntent {
     data class SetBedtime(val hour: Int, val minute: Int) : SettingsIntent
     data class SetMissedCheckInReminder(val enabled: Boolean) : SettingsIntent
     data class SetMissedCheckInTime(val hour: Int, val minute: Int = 0) : SettingsIntent
+    data object DeleteAccount : SettingsIntent
+    data object ClearAccountDeletionError : SettingsIntent
     data object ClearInfoMessage : SettingsIntent
 }

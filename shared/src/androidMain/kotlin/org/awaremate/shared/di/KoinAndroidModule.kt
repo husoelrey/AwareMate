@@ -7,7 +7,9 @@ import org.awaremate.shared.data.local.database.AwareMateDatabase
 import org.awaremate.shared.data.local.database.getAndroidDatabaseBuilder
 import org.awaremate.shared.data.local.datastore.createDataStore
 import org.awaremate.shared.data.remote.AndroidAuthService
+import org.awaremate.shared.data.remote.AndroidAccountDeletionService
 import org.awaremate.shared.data.remote.AndroidFirestoreSyncService
+import org.awaremate.shared.data.remote.AccountDeletionService
 import org.awaremate.shared.data.remote.AuthService
 import org.awaremate.shared.data.remote.CloudSyncService
 import org.awaremate.shared.data.repository.AndroidUsageStatsRepository
@@ -35,6 +37,7 @@ val androidPlatformModule = module {
     // Firebase Auth & Firestore remote services
     single<AuthService> { AndroidAuthService() }
     single<CloudSyncService> { AndroidFirestoreSyncService() }
+    single<AccountDeletionService> { AndroidAccountDeletionService() }
 
     // Android UsageStats & Notification Services
     single<UsageStatsRepository> {

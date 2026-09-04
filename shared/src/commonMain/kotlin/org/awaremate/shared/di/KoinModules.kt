@@ -29,6 +29,7 @@ import org.koin.dsl.module
 
 val commonModule = module {
     // DAOs extracted from Room Database
+    single { get<AwareMateDatabase>().accountDataDao() }
     single { get<AwareMateDatabase>().userDao() }
     single { get<AwareMateDatabase>().companionDao() }
     single { get<AwareMateDatabase>().moodEntryDao() }
@@ -117,9 +118,24 @@ val commonModule = module {
     single { org.awaremate.shared.domain.usecase.growth.GetPersonalizedHobbiesUseCase() }
     single { org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodInsightsUseCase() }
     single { org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodScreenTimeCorrelationUseCase() }
+    single {
+        org.awaremate.shared.domain.usecase.account.DeleteAccountUseCase(
+            connectivityObserver = get(),
+            authService = get(),
+            accountDeletionService = get(),
+            accountDataDao = get(),
+            preferencesRepository = get()
+        )
+    }
 
     // Presentation ScreenModels
-    factory { OnboardingScreenModel(preferencesRepository = get(), saveCompanionUseCase = get()) }
+    factory {
+        OnboardingScreenModel(
+            preferencesRepository = get(),
+            saveCompanionUseCase = get(),
+            authRepository = get()
+        )
+    }
     factory {
         HomeScreenModel(
             getCompanionUseCase = get(),
@@ -171,7 +187,8 @@ val commonModule = module {
     factory {
         SettingsScreenModel(
             preferencesRepository = get(),
-            missedCheckInReminderScheduler = getOrNull()
+            missedCheckInReminderScheduler = getOrNull(),
+            deleteAccountUseCase = get()
         )
     }
     factory {

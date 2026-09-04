@@ -11,11 +11,13 @@ import org.awaremate.shared.domain.model.Companion
 import org.awaremate.shared.domain.model.CompanionEmotion
 import org.awaremate.shared.domain.model.CompanionStage
 import org.awaremate.shared.domain.repository.PreferencesRepository
+import org.awaremate.shared.domain.repository.AuthRepository
 import org.awaremate.shared.domain.usecase.companion.SaveCompanionUseCase
 
 class OnboardingScreenModel(
     private val preferencesRepository: PreferencesRepository,
-    private val saveCompanionUseCase: SaveCompanionUseCase
+    private val saveCompanionUseCase: SaveCompanionUseCase,
+    private val authRepository: AuthRepository? = null
 ) : ScreenModel {
 
     private val _state = MutableStateFlow(OnboardingState())
@@ -88,6 +90,19 @@ class OnboardingScreenModel(
         _state.update { it.copy(isLoading = true) }
 
         screenModelScope.launch {
+            if (authRepository?.getCurrentUser() == null) {
+                val authResult = authRepository?.signInAnonymously()
+                if (authResult?.isFailure == true) {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "We couldn't create your private account. Please check your connection and try again."
+                        )
+                    }
+                    return@launch
+                }
+            }
+
             val initialCompanion = Companion(
                 id = "primary",
                 name = currentState.companionName.ifBlank { "Sprout" },

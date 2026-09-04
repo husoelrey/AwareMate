@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -55,6 +56,7 @@ import org.awaremate.shared.hasUsageStatsPermission
 import org.awaremate.shared.openBrowserUrl
 import org.awaremate.shared.openUsageAccessSettings
 import org.awaremate.shared.presentation.profile.ProfileScreen
+import org.awaremate.shared.presentation.onboarding.OnboardingScreen
 
 class SettingsScreen : Screen {
 
@@ -65,6 +67,7 @@ class SettingsScreen : Screen {
         val state by screenModel.state.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
         var showPrivacyDialog by remember { mutableStateOf(false) }
+        var showDeleteAccountDialog by remember { mutableStateOf(false) }
         var hasUsageAccess by remember { mutableStateOf(hasUsageStatsPermission()) }
         val requestNotificationPermission = rememberNotificationPermissionRequester()
 
@@ -76,6 +79,10 @@ class SettingsScreen : Screen {
                 }
                 delay(800)
             }
+        }
+
+        LaunchedEffect(state.accountDeletionCompleted) {
+            if (state.accountDeletionCompleted) navigator.replaceAll(OnboardingScreen())
         }
 
         Scaffold(
@@ -498,6 +505,43 @@ class SettingsScreen : Screen {
                             ) {
                                 Text("Privacy Policy")
                             }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "Delete my account and data",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Permanently removes your cloud account and all AwareMate data from this device.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            state.accountDeletionError?.let { message ->
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = message,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.semantics { contentDescription = "Account deletion error: $message" }
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                            OutlinedButton(
+                                onClick = {
+                                    screenModel.handleIntent(SettingsIntent.ClearAccountDeletionError)
+                                    showDeleteAccountDialog = true
+                                },
+                                enabled = !state.isDeletingAccount,
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .sizeIn(minHeight = 48.dp)
+                                    .semantics { contentDescription = "Delete AwareMate account and all data" }
+                            ) {
+                                Text(if (state.isDeletingAccount) "Deleting…" else "Delete my account and data")
+                            }
                         }
                     }
 
@@ -645,6 +689,38 @@ class SettingsScreen : Screen {
                         modifier = Modifier.sizeIn(minHeight = 48.dp, minWidth = 48.dp)
                     ) {
                         Text("Read Online")
+                    }
+                }
+            )
+        }
+
+        if (showDeleteAccountDialog) {
+            AlertDialog(
+                onDismissRequest = { showDeleteAccountDialog = false },
+                title = { Text("Delete account and data?") },
+                text = {
+                    Text(
+                        "This permanently removes your companion, check-ins, reflections, focus history, and cloud account. This cannot be undone."
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            showDeleteAccountDialog = false
+                            screenModel.handleIntent(SettingsIntent.DeleteAccount)
+                        },
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                        modifier = Modifier.sizeIn(minHeight = 48.dp, minWidth = 48.dp)
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showDeleteAccountDialog = false },
+                        modifier = Modifier.sizeIn(minHeight = 48.dp, minWidth = 48.dp)
+                    ) {
+                        Text("Keep my account")
                     }
                 }
             )
