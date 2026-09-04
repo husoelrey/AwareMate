@@ -1,8 +1,8 @@
 # AwareMate - Current Status
 
-**Last Updated:** 2026-09-04T20:40:28+03:00
+**Last Updated:** 2026-09-04T20:43:30+03:00
 **Repository Path:** `c:\Users\husoelrey\Documents\Projects\AwareMate`  
-**Branch:** `codex/p7-extended-polish`
+**Branch:** `main`
 **Current Phase:** P7 Extended Scope Completed (100% Verified) — **Compassionate Insights, Gentle Re-engagement, Data Control, Private Sharing**
 
 ---
@@ -98,7 +98,7 @@ Verification commands/results:
 ---
 
 ## 4. MVP Release Status
-AwareMate is now in an **MVP Ready state for Closed/Internal Testing**. All code, tests, and configurations are complete.
+AwareMate is now in an **MVP Ready state for Closed/Internal Testing**. All code, tests, and configurations are complete. GitHub Release `v1.0.0` is published with `AwareMate-v1.0.0.apk` at `https://github.com/husoelrey/AwareMate/releases/tag/v1.0.0`.
 Manual operational steps remaining for the maintainer:
 1. Generate production keystore `.jks` for Play Console release signing (or let Google Play manage app signing).
 2. Create app entry on Google Play Console and upload `androidApp-release.aab`.
