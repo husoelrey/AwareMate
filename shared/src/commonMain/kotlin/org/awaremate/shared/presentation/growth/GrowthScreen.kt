@@ -305,7 +305,10 @@ class GrowthScreen : Screen {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // 8. Private weekly mood/screen-time correlation
-                    WeeklyMoodScreenTimeCard(correlation = state.weeklyCorrelation)
+                    WeeklyMoodScreenTimeCard(
+                        moodEntries = state.moodEntries,
+                        correlation = state.weeklyCorrelation
+                    )
 
                     Spacer(modifier = Modifier.height(24.dp))
                 }

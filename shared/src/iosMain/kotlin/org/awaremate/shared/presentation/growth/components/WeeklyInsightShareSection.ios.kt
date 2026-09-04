@@ -6,8 +6,10 @@ import org.awaremate.shared.domain.model.MoodEntry
 import org.awaremate.shared.domain.model.WeeklyMoodScreenTimeCorrelation
 
 @Composable
-fun WeeklyMoodScreenTimeCard(
+actual fun WeeklyInsightShareSection(
     moodEntries: List<MoodEntry>,
     correlation: WeeklyMoodScreenTimeCorrelation,
-    modifier: Modifier = Modifier
-) = WeeklyInsightShareSection(moodEntries, correlation, modifier)
+    modifier: Modifier
+) {
+    WeeklyInsightCardContent(moodEntries, correlation, modifier)
+}

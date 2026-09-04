@@ -213,7 +213,7 @@ private fun MoodDayCell(day: MoodCalendarDay, onClick: () -> Unit) {
     val background = if (mood == null) {
         MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
     } else {
-        moodColor(mood)
+        moodEntryColor(mood)
     }
     val description = if (mood == null) {
         "$date, no check-in saved"
@@ -258,7 +258,7 @@ private fun MoodDayCell(day: MoodCalendarDay, onClick: () -> Unit) {
 }
 
 @Composable
-private fun moodColor(mood: MoodEntry): Color = when (mood.moodScore.coerceIn(1, 5)) {
+internal fun moodEntryColor(mood: MoodEntry): Color = when (mood.moodScore.coerceIn(1, 5)) {
     1 -> MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.55f + mood.energyLevel * 0.05f)
     2 -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f + mood.energyLevel * 0.05f)
     3 -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f + mood.energyLevel * 0.05f)
