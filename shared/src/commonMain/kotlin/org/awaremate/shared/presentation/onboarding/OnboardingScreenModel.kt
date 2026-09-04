@@ -91,16 +91,9 @@ class OnboardingScreenModel(
 
         screenModelScope.launch {
             if (authRepository?.getCurrentUser() == null) {
-                val authResult = authRepository?.signInAnonymously()
-                if (authResult?.isFailure == true) {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = "We couldn't create your private account. Please check your connection and try again."
-                        )
-                    }
-                    return@launch
-                }
+                // Cloud identity is optional for the local-first MVP. An unavailable or
+                // placeholder Firebase backend must never block local onboarding.
+                authRepository?.signInAnonymously()
             }
 
             val initialCompanion = Companion(

@@ -2,12 +2,16 @@ package org.awaremate.shared.presentation
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.awaremate.shared.data.repository.CompanionRepositoryImpl
 import org.awaremate.shared.domain.usecase.companion.SaveCompanionUseCase
+import org.awaremate.shared.domain.model.User
+import org.awaremate.shared.domain.repository.AuthRepository
 import org.awaremate.shared.presentation.onboarding.OnboardingIntent
 import org.awaremate.shared.presentation.onboarding.OnboardingScreenModel
 import org.awaremate.shared.presentation.onboarding.OnboardingStep
@@ -116,4 +120,29 @@ class OnboardingScreenModelTest {
         val saved = fakeCompanionDao.getCompanionById("primary")
         assertEquals("Sage", saved?.name)
     }
+
+    @Test
+    fun testFirebaseFailureDoesNotBlockLocalOnboarding() = runTest(testDispatcher) {
+        val companionDao = FakeCompanionDao()
+        val model = OnboardingScreenModel(
+            preferencesRepository = FakePreferencesRepository(),
+            saveCompanionUseCase = SaveCompanionUseCase(CompanionRepositoryImpl(companionDao)),
+            authRepository = FailingAuthRepository
+        )
+
+        model.handleIntent(OnboardingIntent.FinishOnboarding)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertTrue(model.state.value.isCompleted)
+        assertEquals(null, model.state.value.errorMessage)
+        assertEquals("Sprout", companionDao.getCompanionById("primary")?.name)
+    }
+}
+
+private object FailingAuthRepository : AuthRepository {
+    override fun observeAuthState(): Flow<User?> = flowOf(null)
+    override fun getCurrentUser(): User? = null
+    override suspend fun signInAnonymously(): Result<User> = Result.failure(IllegalStateException("offline"))
+    override suspend fun signInWithGoogle(idToken: String): Result<User> = Result.failure(IllegalStateException("offline"))
+    override suspend fun signOut(): Result<Unit> = Result.success(Unit)
 }
