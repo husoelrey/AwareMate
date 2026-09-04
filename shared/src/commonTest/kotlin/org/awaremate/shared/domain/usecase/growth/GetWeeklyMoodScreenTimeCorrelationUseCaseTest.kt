@@ -16,7 +16,7 @@ class GetWeeklyMoodScreenTimeCorrelationUseCaseTest {
 
     @Test
     fun fewerThanFiveDistinctMoodDaysNeverProducesChartData() {
-        val moods = (1..4).map { day -> mood(day, energy = 3) }
+        val moods = (1..3).map { day -> mood(day, energy = 3) }
         val result = useCase(moods, usage(1..5), currentWeekEnd, TimeZone.UTC)
 
         assertFalse(result.hasEnoughMoodDays)
@@ -34,6 +34,7 @@ class GetWeeklyMoodScreenTimeCorrelationUseCaseTest {
         assertNotNull(result.observationalInsight)
         assertFalse(result.observationalInsight.contains("cause", ignoreCase = true))
         assertFalse(result.observationalInsight.contains("because", ignoreCase = true))
+        assertFalse(result.observationalInsight.contains("due to", ignoreCase = true))
     }
 
     @Test
