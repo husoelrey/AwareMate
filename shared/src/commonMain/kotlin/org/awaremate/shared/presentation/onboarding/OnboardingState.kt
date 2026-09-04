@@ -1,11 +1,12 @@
 package org.awaremate.shared.presentation.onboarding
 
-enum class OnboardingStep(val stepNumber: Int, val totalSteps: Int = 5) {
+enum class OnboardingStep(val stepNumber: Int, val totalSteps: Int = 6) {
     WELCOME(1),
-    INTERESTS(2),
-    COMPANION_NAMING(3),
-    PERMISSIONS(4),
-    INTENTIONS(5)
+    WHY_IT_EXISTS(2),
+    INTERESTS(3),
+    COMPANION_NAMING(4),
+    PERMISSIONS(5),
+    INTENTIONS(6)
 }
 
 enum class UserInterest(val title: String, val description: String, val icon: String) {

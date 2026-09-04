@@ -57,7 +57,10 @@ class OnboardingScreenModelTest {
 
     @Test
     fun testStepNavigationForwardAndBackward() {
-        // Forward: WELCOME -> INTERESTS -> COMPANION_NAMING -> PERMISSIONS -> INTENTIONS
+        // Forward: WELCOME -> WHY -> INTERESTS -> COMPANION_NAMING -> PERMISSIONS -> INTENTIONS
+        screenModel.handleIntent(OnboardingIntent.NextStep)
+        assertEquals(OnboardingStep.WHY_IT_EXISTS, screenModel.state.value.currentStep)
+
         screenModel.handleIntent(OnboardingIntent.NextStep)
         assertEquals(OnboardingStep.INTERESTS, screenModel.state.value.currentStep)
 

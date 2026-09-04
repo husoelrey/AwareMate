@@ -122,6 +122,11 @@ class OnboardingScreen : Screen {
                                 onNext = { screenModel.handleIntent(OnboardingIntent.NextStep) }
                             )
 
+                            OnboardingStep.WHY_IT_EXISTS -> WhyItExistsStep(
+                                onBack = { screenModel.handleIntent(OnboardingIntent.PreviousStep) },
+                                onNext = { screenModel.handleIntent(OnboardingIntent.NextStep) }
+                            )
+
                             OnboardingStep.INTERESTS -> InterestsStep(
                                 selectedInterests = state.selectedInterests,
                                 onToggleInterest = { screenModel.handleIntent(OnboardingIntent.ToggleInterest(it)) },
@@ -160,6 +165,76 @@ class OnboardingScreen : Screen {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WhyItExistsStep(onBack: () -> Unit, onNext: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .semantics { contentDescription = "Why AwareMate exists onboarding step" },
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(text = "🪞", fontSize = 54.sp)
+            Spacer(modifier = Modifier.height(18.dp))
+            Text(
+                text = "A mirror, not a game to win",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "AwareMate is a low-pressure companion for noticing your own digital and personal habits over time.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text("There are no perfect streaks and no score you have to beat.")
+                    Text("Your check-ins and screen-time patterns stay focused on your own experience—not comparisons with anyone else.")
+                    Text("AwareMate can support reflection and gentle habit changes, but it is not therapy, medical care, or a tool for controlling you.")
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            OutlinedButton(
+                onClick = onBack,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = "Go back to welcome" }
+            ) {
+                Text("Back")
+            }
+            Button(
+                onClick = onNext,
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = "Continue after reading why AwareMate exists" }
+            ) {
+                Text("Continue →")
             }
         }
     }

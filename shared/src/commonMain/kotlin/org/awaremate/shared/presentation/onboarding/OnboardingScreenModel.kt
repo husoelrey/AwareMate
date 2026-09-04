@@ -25,7 +25,8 @@ class OnboardingScreenModel(
         when (intent) {
             OnboardingIntent.NextStep -> {
                 val next = when (_state.value.currentStep) {
-                    OnboardingStep.WELCOME -> OnboardingStep.INTERESTS
+                    OnboardingStep.WELCOME -> OnboardingStep.WHY_IT_EXISTS
+                    OnboardingStep.WHY_IT_EXISTS -> OnboardingStep.INTERESTS
                     OnboardingStep.INTERESTS -> OnboardingStep.COMPANION_NAMING
                     OnboardingStep.COMPANION_NAMING -> OnboardingStep.PERMISSIONS
                     OnboardingStep.PERMISSIONS -> OnboardingStep.INTENTIONS
@@ -37,7 +38,8 @@ class OnboardingScreenModel(
             OnboardingIntent.PreviousStep -> {
                 val prev = when (_state.value.currentStep) {
                     OnboardingStep.WELCOME -> OnboardingStep.WELCOME
-                    OnboardingStep.INTERESTS -> OnboardingStep.WELCOME
+                    OnboardingStep.WHY_IT_EXISTS -> OnboardingStep.WELCOME
+                    OnboardingStep.INTERESTS -> OnboardingStep.WHY_IT_EXISTS
                     OnboardingStep.COMPANION_NAMING -> OnboardingStep.INTERESTS
                     OnboardingStep.PERMISSIONS -> OnboardingStep.COMPANION_NAMING
                     OnboardingStep.INTENTIONS -> OnboardingStep.PERMISSIONS
