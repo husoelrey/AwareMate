@@ -25,12 +25,14 @@ import org.awaremate.shared.domain.repository.DailyChallengeRepository
 import org.awaremate.shared.domain.repository.HobbyRepository
 import org.awaremate.shared.domain.repository.MoodRepository
 import org.awaremate.shared.domain.repository.SelfDiscoveryRepository
+import org.awaremate.shared.domain.repository.UsageStatsRepository
 import org.awaremate.shared.domain.usecase.challenge.CompleteDailyChallengeUseCase
 import org.awaremate.shared.domain.usecase.companion.AddExperienceUseCase
 import org.awaremate.shared.domain.usecase.companion.UpdateCompanionEmotionUseCase
 import org.awaremate.shared.domain.usecase.companion.UpdateMomentumUseCase
 import org.awaremate.shared.domain.usecase.growth.GetPersonalizedHobbiesUseCase
 import org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodInsightsUseCase
+import org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodScreenTimeCorrelationUseCase
 import org.awaremate.shared.domain.usecase.growth.LogMoodUseCase
 
 class GrowthScreenModel(
@@ -41,6 +43,8 @@ class GrowthScreenModel(
     private val logMoodUseCase: LogMoodUseCase,
     private val getPersonalizedHobbiesUseCase: GetPersonalizedHobbiesUseCase,
     private val getWeeklyMoodInsightsUseCase: GetWeeklyMoodInsightsUseCase,
+    private val getWeeklyMoodScreenTimeCorrelationUseCase: GetWeeklyMoodScreenTimeCorrelationUseCase,
+    private val usageStatsRepository: UsageStatsRepository,
     private val addExperienceUseCase: AddExperienceUseCase,
     private val updateMomentumUseCase: UpdateMomentumUseCase,
     private val updateCompanionEmotionUseCase: UpdateCompanionEmotionUseCase,
@@ -84,6 +88,7 @@ class GrowthScreenModel(
                             weeklyInsights = insights
                         )
                     }
+                    refreshWeeklyCorrelation(moods)
                     updateRecommendations()
                 }
             }
@@ -109,6 +114,18 @@ class GrowthScreenModel(
                     _state.update { it.copy(dailyChallenges = challenges, isLoading = false) }
                 }
             }
+        }
+    }
+
+    private suspend fun refreshWeeklyCorrelation(moods: List<MoodEntry>) {
+        if (!getWeeklyMoodScreenTimeCorrelationUseCase.hasEnoughMoodDays(moods)) {
+            _state.update { it.copy(weeklyCorrelation = org.awaremate.shared.domain.model.WeeklyMoodScreenTimeCorrelation(false)) }
+            return
+        }
+        val ranges = getWeeklyMoodScreenTimeCorrelationUseCase.currentWeekRanges()
+        val usage = usageStatsRepository.getWeeklyUsage(ranges)
+        _state.update {
+            it.copy(weeklyCorrelation = getWeeklyMoodScreenTimeCorrelationUseCase(moods, usage))
         }
     }
 

@@ -13,6 +13,7 @@ import org.awaremate.shared.data.repository.DailyChallengeRepositoryImpl
 import org.awaremate.shared.data.repository.HobbyRepositoryImpl
 import org.awaremate.shared.data.repository.MoodRepositoryImpl
 import org.awaremate.shared.data.repository.SelfDiscoveryRepositoryImpl
+import org.awaremate.shared.data.repository.UsageStatsRepositoryImpl
 import org.awaremate.shared.domain.model.BreathingPattern
 import org.awaremate.shared.domain.model.CompanionCategory
 import org.awaremate.shared.domain.model.CompanionEmotion
@@ -25,12 +26,14 @@ import org.awaremate.shared.domain.usecase.companion.UpdateCompanionEmotionUseCa
 import org.awaremate.shared.domain.usecase.companion.UpdateMomentumUseCase
 import org.awaremate.shared.domain.usecase.growth.GetPersonalizedHobbiesUseCase
 import org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodInsightsUseCase
+import org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodScreenTimeCorrelationUseCase
 import org.awaremate.shared.domain.usecase.growth.LogMoodUseCase
 import org.awaremate.shared.test.FakeCompanionDao
 import org.awaremate.shared.test.FakeDailyChallengeDao
 import org.awaremate.shared.test.FakeHobbyDao
 import org.awaremate.shared.test.FakeMoodEntryDao
 import org.awaremate.shared.test.FakeSelfDiscoveryPromptDao
+import org.awaremate.shared.test.FakeScreenTimeDao
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -97,6 +100,8 @@ class GrowthScreenModelTest {
             logMoodUseCase = logMoodUseCase,
             getPersonalizedHobbiesUseCase = GetPersonalizedHobbiesUseCase(),
             getWeeklyMoodInsightsUseCase = GetWeeklyMoodInsightsUseCase(),
+            getWeeklyMoodScreenTimeCorrelationUseCase = GetWeeklyMoodScreenTimeCorrelationUseCase(),
+            usageStatsRepository = UsageStatsRepositoryImpl(FakeScreenTimeDao()),
             addExperienceUseCase = addExpUseCase,
             updateMomentumUseCase = momentumUseCase,
             updateCompanionEmotionUseCase = emotionUseCase,

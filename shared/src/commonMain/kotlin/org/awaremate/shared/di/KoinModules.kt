@@ -116,6 +116,7 @@ val commonModule = module {
     }
     single { org.awaremate.shared.domain.usecase.growth.GetPersonalizedHobbiesUseCase() }
     single { org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodInsightsUseCase() }
+    single { org.awaremate.shared.domain.usecase.growth.GetWeeklyMoodScreenTimeCorrelationUseCase() }
 
     // Presentation ScreenModels
     factory { OnboardingScreenModel(preferencesRepository = get(), saveCompanionUseCase = get()) }
@@ -159,6 +160,8 @@ val commonModule = module {
             logMoodUseCase = get(),
             getPersonalizedHobbiesUseCase = get(),
             getWeeklyMoodInsightsUseCase = get(),
+            getWeeklyMoodScreenTimeCorrelationUseCase = get(),
+            usageStatsRepository = get(),
             addExperienceUseCase = get(),
             updateMomentumUseCase = get(),
             updateCompanionEmotionUseCase = get(),

@@ -46,6 +46,7 @@ import org.awaremate.shared.presentation.growth.components.MoodCheckInDialog
 import org.awaremate.shared.presentation.growth.components.SelfDiscoveryCard
 import org.awaremate.shared.presentation.growth.components.TodaysFeelingCalendar
 import org.awaremate.shared.presentation.growth.components.WeeklyMoodInsightsCard
+import org.awaremate.shared.presentation.growth.components.WeeklyMoodScreenTimeCard
 import org.awaremate.shared.presentation.home.components.DailySparksCard
 
 class GrowthScreen : Screen {
@@ -303,6 +304,11 @@ class GrowthScreen : Screen {
 
                     // 7. Weekly Mood & Growth Insights
                     WeeklyMoodInsightsCard(insights = state.weeklyInsights)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // 8. Private weekly mood/screen-time correlation
+                    WeeklyMoodScreenTimeCard(correlation = state.weeklyCorrelation)
 
                     Spacer(modifier = Modifier.height(24.dp))
                 }

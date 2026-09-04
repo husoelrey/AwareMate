@@ -7,6 +7,7 @@ import org.awaremate.shared.domain.model.HobbyCategory
 import org.awaremate.shared.domain.model.MoodEntry
 import org.awaremate.shared.domain.model.SelfDiscoveryPrompt
 import org.awaremate.shared.domain.model.WeeklyMoodInsights
+import org.awaremate.shared.domain.model.WeeklyMoodScreenTimeCorrelation
 
 data class GrowthState(
     val isLoading: Boolean = true,
@@ -20,6 +21,7 @@ data class GrowthState(
     val currentPromptIndex: Int = 0,
     val dailyChallenges: List<DailyChallenge> = emptyList(),
     val weeklyInsights: WeeklyMoodInsights? = null,
+    val weeklyCorrelation: WeeklyMoodScreenTimeCorrelation = WeeklyMoodScreenTimeCorrelation(false),
     val breathingState: BreathingSessionState = BreathingSessionState(),
     val isMoodDialogOpen: Boolean = false,
     val isBreathingDialogOpen: Boolean = false,
