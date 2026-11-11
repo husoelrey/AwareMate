@@ -1,180 +1,137 @@
 # AwareMate
 
 [![AwareMate CI](https://github.com/husoelrey/AwareMate/actions/workflows/ci.yml/badge.svg)](https://github.com/husoelrey/AwareMate/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-purple.svg)](https://kotlinlang.org)
-[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.7.3-teal.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
-[![Platform](https://img.shields.io/badge/Platform-Android_API_26+-green.svg)](https://developer.android.com)
+[![Release](https://img.shields.io/github/v/release/husoelrey/AwareMate)](https://github.com/husoelrey/AwareMate/releases/latest)
+[![License](https://img.shields.io/github/license/husoelrey/AwareMate)](LICENSE)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?logo=android&logoColor=white)](https://developer.android.com/)
 
-> **Compassionate Awareness Companion App for Youth Growth & Healthy Digital Habits**
+> A compassionate, open-source Android companion for healthier digital habits and personal growth.
 
-[Contributing Guide](CONTRIBUTING.md) • [Privacy Policy](docs/PRIVACY_POLICY.md) • [Store Asset Specifications](docs/STORE_ASSET_SPEC.md)
+AwareMate helps people understand their screen time, reflect on their mood, focus with intention, and build sustainable habits. Instead of punitive streaks or hard blocking, it uses gentle nudges, gradual momentum, and a plant companion that grows with positive actions.
 
----
+[Download the latest internal-test APK](https://github.com/husoelrey/AwareMate/releases/latest) · [Roadmap](ROADMAP.md) · [Privacy policy](docs/PRIVACY_POLICY.md) · [Contributing](CONTRIBUTING.md)
 
-## 1. Executive Summary & Vision
-**AwareMate** is a compassionate awareness companion app built with Kotlin Multiplatform and Compose Multiplatform. 
-Our core mission is to transform reclaimed screen time into meaningful personal growth through compassionate awareness. Rather than using punitive streaks or absolute blocks, AwareMate utilizes empathetic design and a companion character system to foster long-term habit formation.
+> [!IMPORTANT]
+> The current `v1.0.0` APK is an internal-testing build signed with the documented debug-key fallback. It is not a production Play Store release.
 
-**Erasmus+ Alignment:**
-AwareMate is designed to align with the 4 horizontal priorities of the Erasmus+ youth project, empowering youth through digital literacy, environmental awareness, civic participation, and inclusion.
+## Highlights
 
-**Market Gap:**
-No current application seamlessly combines digital, personal, environmental, and civic awareness into a single, cohesive, free, and open-source platform.
+- **Digital awareness:** on-device screen-time insights, mindful nudges, focus sessions, and Digital Sunset reminders.
+- **Personal growth:** mood journaling, breathing exercises, offline hobby discovery, reflections, and daily micro-challenges.
+- **Compassionate gamification:** a plant companion, cumulative XP, and gradual momentum instead of fragile streaks.
+- **Private weekly insights:** personal mood and screen-time patterns with no rankings, comparisons, or social feed.
+- **Quick check-ins:** an Android home-screen widget that uses the same mood and reward logic as the app.
+- **Local-first operation:** Room is the source of truth; supported actions remain available offline and sync later.
+- **User control:** in-app account and data deletion, configurable notifications, and user-initiated private image sharing.
+- **Accessible UI:** Material 3, dynamic color, TalkBack semantics, and 48 dp minimum interactive targets.
 
-## 2. System Architecture & Module Topology
-The application follows Clean Architecture principles paired with an MVI presentation pattern.
+## Product principles
+
+AwareMate is designed around compassionate awareness:
+
+- no punitive streak resets or shame-driven notifications;
+- no ads, paywalls, or sale of personal data;
+- no leaderboards, public profiles, or dark patterns;
+- no absolute device blocking or parental surveillance;
+- not a medical device or a replacement for professional care.
+
+## Architecture
+
+The project uses Clean Architecture with MVI-style presentation and an Android-first Kotlin Multiplatform codebase.
 
 ```mermaid
-graph TD
-    UI[Presentation Layer - Compose UI] --> VM[Shared Presentation - ViewModels, MVI State]
-    VM --> UC[Domain Layer - Use Cases]
-    UC --> RI[Domain Layer - Repository Interfaces]
-    RI --> DA[Data Layer - Room DB, Firebase, DataStore]
-    DA --> PS[Platform Services - UsageStats, Notifications]
-    
-    subgraph Shared Code
-        VM
-        UC
-        RI
-    end
+flowchart LR
+    UI[Compose UI] --> Presentation[Shared presentation / MVI]
+    Presentation --> Domain[Use cases and domain models]
+    Domain --> Repositories[Repository interfaces]
+    Repositories --> Data[Room, DataStore, Firebase]
+    Data --> Platform[UsageStats, notifications, widgets]
 ```
 
-## 3. Companion System Design
-AwareMate centers around a plant-based companion system that reflects the user's progress.
+| Area | Technology |
+| --- | --- |
+| Language | Kotlin 2.2.10 |
+| UI | Compose Multiplatform 1.7.3, Material 3 |
+| Architecture | Kotlin Multiplatform, Clean Architecture, MVI |
+| Local data | Room KMP, DataStore |
+| Dependency injection | Koin |
+| Navigation | Voyager |
+| Cloud services | Firebase Auth, Firestore, FCM, Crashlytics, Analytics |
+| Background work | WorkManager, Jetpack Glance |
+| Charts | Vico |
 
-- **Growth Stages:** `SEED` → `SPROUT` → `BLOOM` → `TREE` → `ANCIENT_TREE`
-- **XP System:** Users earn XP in distinct categories: Happiness, Energy, Wisdom, and Creativity.
-- **Compassionate Design:** There is no "death" state. We eschew punishment and guilt. The companion responds empathetically to lapses.
-- **Momentum Score:** Instead of binary streaks (where one missed day equals complete failure), AwareMate uses a momentum score that decays gradually.
+## Repository layout
 
-## 4. Awareness Modules
-
-### Digital Awareness
-- **UsageStats Integration:** Safely aggregates application usage time (Android-first).
-- **Mindful Nudges:** Gentle, configurable notifications when screen time thresholds are breached.
-- **Focus Sessions:** Timer functionality paired with companion animations.
-- **Digital Sunset:** Evening reminders to disconnect and wind down.
-
-### Personal Growth
-- **Mood Journal:** Log feelings with emojis and notes.
-- **Breath Exercises:** Guided, animated breathing exercises.
-- **Hobby Discovery:** Suggestions for offline activities based on user preferences.
-- **Micro-challenges:** Small, achievable daily tasks to earn XP.
-- **Reflection Prompts:** End-of-day introspection questions.
-- **Self-Discovery Prompts:** Lightweight cards that surface habitual behaviors a user may never have noticed about themselves (e.g. a one-sided physical habit). Framed as discovery, not comparison — no unsourced statistics or pass/fail framing.
-
-### Future Modules
-- Environmental Awareness
-- Social/Civic Awareness
-
-## 5. Technical Stack
-
-| Technology | Purpose |
-|------------|---------|
-| Kotlin 2.2+ | Core language for business logic and UI |
-| Compose Multiplatform | Declarative UI framework |
-| Room KMP | Local SQLite database |
-| Koin | Dependency Injection |
-| Voyager | Multiplatform navigation |
-| Firebase (Auth/Firestore) | Backend and synchronization |
-| Coil 3 | Image loading |
-| Vico | Charts and data visualization |
-
-## 6. Data Model
-Key domain entities:
-
-```kotlin
-data class User(
-    val id: String,
-    val momentumScore: Int,
-    val preferences: Preferences
-)
-
-data class Companion(
-    val id: String,
-    val name: String,
-    val stage: GrowthStage,
-    val currentXp: Int
-)
-
-data class MoodEntry(
-    val id: String,
-    val timestamp: Instant,
-    val emoji: String,
-    val note: String?
-)
+```text
+androidApp/            Android application, manifest, resources, and build config
+shared/src/commonMain  Shared domain, data, presentation, and Compose UI
+shared/src/androidMain Android platform integrations
+shared/src/iosMain     Deferred iOS implementations and stubs
+shared/src/commonTest  Shared unit tests
+docs/                  Privacy, store, architecture, and project documentation
+.github/workflows/     Continuous integration
 ```
 
-## 7. MVI Architecture Pattern
-We utilize the Model-View-Intent pattern to ensure unidirectional data flow.
+The current release target is Android. iOS, desktop, and web distribution are planned for later roadmap phases.
 
-- **Intent:** User actions or system events.
-- **Reducer:** Pure function taking the current state and an intent, returning a new state.
-- **State:** Immutable data class representing the UI state.
+## Build locally
 
-```kotlin
-// Example
-data class HomeState(val isLoading: Boolean, val companion: Companion?)
-sealed class HomeIntent { object LoadData : HomeIntent() }
+### Requirements
+
+- JDK 17+
+- Android SDK 35
+- Android Studio or IntelliJ IDEA with Kotlin and Compose support
+- Git
+
+Gradle 9.5 is provided through the repository wrapper.
+
+### Setup
+
+```bash
+git clone https://github.com/husoelrey/AwareMate.git
+cd AwareMate
 ```
 
-## 8. Data & Sustainability
-- **No Data Selling:** Fully non-profit and open source; no ads, no monetization of user data.
-- **Firebase Security Rules:** Users can only read/write their own documents.
-- **Sustainability:** 100% free for users. Infrastructure costs (Firebase, hosting) are covered by optional donations/sponsorship — not ads or data monetization.
-- **Store Requirements:** A minimal privacy policy page is still required for the Play Store listing and for Firebase Auth account creation, independent of internal priority — tracked in PLAN.md P7.
+For an offline/local build, copy the placeholder Firebase configuration:
 
-## 9. Accessibility
-- Target: WCAG 2.1 AA.
-- Full TalkBack/VoiceOver support with meaningful content descriptions.
-- Dynamic text sizing and rigorous color contrast ratio enforcement.
+```powershell
+# Windows PowerShell
+Copy-Item androidApp/google-services.json.example androidApp/google-services.json
+```
 
-## 10. Prerequisites & Setup
+```bash
+# macOS / Linux
+cp androidApp/google-services.json.example androidApp/google-services.json
+```
 
-### Environment Requirements
-- **JDK 17+** (Java 17 target compatibility, JDK 21 toolchain compatible)
-- **Android SDK** API 35 (Android 15) with Build Tools 35.0.0+
-- **Gradle 8.11.1+** (managed via the included `./gradlew` wrapper)
-- **Android Studio** Ladybug / Meerkat or **IntelliJ IDEA** with Kotlin & Compose Multiplatform plugins
+For live Firebase features, replace the placeholder with your own configuration for `org.awaremate.android` and enable the required Firebase services. Never commit `google-services.json`.
 
-### Getting Started
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/husoelrey/AwareMate.git
-   cd AwareMate
-   ```
+### Verify
 
-2. **Configure Firebase (`google-services.json`):**
-   - *For Local Development / Offline Build:* A template is provided at `androidApp/google-services.json.example`. Copy it to `androidApp/google-services.json`:
-     ```bash
-     # Windows PowerShell
-     Copy-Item androidApp/google-services.json.example androidApp/google-services.json
-     # Unix / macOS
-     cp androidApp/google-services.json.example androidApp/google-services.json
-     ```
-   - *For Real Firebase Integration:*
-     1. Create a project in the [Firebase Console](https://console.firebase.google.com/).
-     2. Register an Android app with package name `org.awaremate.android` (and `org.awaremate.android.debug`).
-     3. Download the generated `google-services.json` and place it in the `androidApp/` directory (`google-services.json` is gitignored).
-     4. Enable **Authentication** (Anonymous + Google Sign-In) and **Cloud Firestore**.
+```bash
+./gradlew test
+./gradlew lintDebug
+./gradlew :androidApp:assembleDebug
+```
 
-3. **Build and Test Commands:**
-   - **Assemble Debug APK:** `./gradlew assembleDebug`
-   - **Run Unit Tests:** `./gradlew test`
-   - **Run Lint Checks:** `./gradlew lintDebug`
+On Windows Command Prompt, use `gradlew.bat` instead of `./gradlew`.
 
-## 11. Project Structure
-- `androidApp/`: Android specific configurations and entry point.
-- `shared/`: The KMP module containing:
-  - `commonMain`: Domain, Data, and Presentation logic shared across platforms.
-  - `androidMain`: Android-specific implementations of shared interfaces.
-  - `iosMain`: iOS-specific implementations (future).
+## Project status
 
-## 12. Erasmus+ Alignment
-- **Youth Goals:** Promotes mental health and well-being.
-- **DigComp:** Fosters digital literacy and responsible technology usage.
-- **GreenComp:** Environmental module (future) aligns with sustainability goals.
+- **Latest release:** [`v1.0.0`](https://github.com/husoelrey/AwareMate/releases/tag/v1.0.0)
+- **Stage:** MVP ready for closed/internal Android testing
+- **CI:** unit tests, lint, debug APK, and release AAB assembly
+- **Next operational steps:** production signing, real Firebase configuration, Play Console setup, and final store graphics
 
-## 13. License
-Licensed under the Apache License, Version 2.0.
+See [CURRENT_STATUS.md](CURRENT_STATUS.md) for verified build details and [ROADMAP.md](ROADMAP.md) for planned releases.
+
+## Contributing and security
+
+Contributions that preserve compassionate UX, privacy, youth safety, and accessibility are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+
+Please report vulnerabilities privately as described in [SECURITY.md](SECURITY.md), not through a public issue.
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).

@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest a compassionate and privacy-preserving improvement
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or need
+      description: What user need would this address?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Explain the smallest useful version of the idea.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. Mention simpler or non-technical alternatives.
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Product principles
+      options:
+        - label: This avoids shame, punishment, dark patterns, and social pressure.
+          required: true
+        - label: This does not require ads or selling personal data.
+          required: true
+        - label: I considered accessibility and youth safety.
+          required: true

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/husoelrey/AwareMate/security/advisories/new
+    about: Report security and privacy vulnerabilities privately.
+  - name: Questions and support
+    url: https://github.com/husoelrey/AwareMate/discussions
+    about: Ask usage and development questions without opening a bug.
