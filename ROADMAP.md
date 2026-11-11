@@ -57,9 +57,9 @@ The roadmap outlines the strategic phases for developing AwareMate, evolving it 
 - **Features:**
   - Android Accessibility Service integration to detect and gently interrupt doom-scrolling patterns in specific social media apps
 
-## v2.2 Community Features
-- **Focus:** Collective growth.
+## v2.2 Collective Impact
+- **Focus:** Encourage shared positive action without turning AwareMate into a social network.
 - **Features:**
-  - Shared community challenges
-  - Anonymous, opt-in leaderboards
-  - Group momentum goals
+  - Curated community challenges
+  - Optional aggregate impact milestones
+  - No rankings, public profiles, direct messaging, or social pressure

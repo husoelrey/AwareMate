@@ -17,7 +17,7 @@ All contributors, maintainers, and community members must uphold our non-negotia
 1. **Prerequisites:**
    - JDK 17+ (Java 17 target compatibility)
    - Android SDK API 35 (Android 15)
-   - Gradle 8.11+ (via `./gradlew` wrapper)
+   - Gradle 9.5 (via the included `./gradlew` wrapper)
 2. **Clone & Prepare:**
    ```bash
    git clone https://github.com/husoelrey/AwareMate.git
